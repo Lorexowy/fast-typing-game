@@ -15,9 +15,9 @@ const games = {};
 
 // Przykładowe teksty do pisania
 const textsArray = [
-  "Oto dłuższy tekst, który użytkownik ma przepisać. Składa się z kilku zdań, polskich znaków i przecinków.",
-  "Drugi przykładowy tekst, z polskimi znakami: zażółć gęślą jaźń!",
-  "Trzeci tekst - jeszcze dłuższy. Możesz w nim dodać wiele znaków, aby naprawdę przetestować szybką klawiaturę."
+  "Litwo, Ojczyzno moja! ty jesteś jak zdrowie; Ile cię trzeba cenić, ten tylko się dowie, Kto cię stracił. Dziś piękność twą w całej ozdobie Widzę i opisuję, bo tęsknię po tobie. Panno święta, co Jasnej bronisz Częstochowy; I w Ostrej świecisz Bramie! Ty, co gród zamkowy; Nowogródzki ochraniasz z jego wiernym ludem!",
+  "To jest też mój dobry znajomy yyy.. Dwóch polaków w teamie prawda? Vander Amazing. Nie no Amazing akurat nie jest polakiem. E jak to nie jest polakiem. To jest trolling pod publike on udaje on udaje. Nie no przecież. Spokojnie. No co ty opowiadasz naprawdę. Dobra, okej. Profesjonalny analyst desk.",
+  "Sascha Tomas miał jedną zasadę: nigdy nie przegrywać. Dotyczyło to każdej dziedziny jego życia – sportu, gier, pracy, a nawet… związków. Jego znajomi żartowali, że dla niego relacje romantyczne to bardziej wyścig niż uczucie. Ale Sascha nie żartował. Trzy miesiące – tyle trwała każda jego relacja. Zawsze zaczynało się idealnie. Był czarujący, uważny, spontaniczny. Pierwsze randki były jak z filmu, pełne ekscytujących niespodzianek i intensywnych emocji. Jego dziewczyny myślały, że trafiły na kogoś wyjątkowego."
 ];
 
 // Pomocnicza funkcja do generowania kodu (4 znaki)
