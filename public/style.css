@@ -208,6 +208,17 @@ input[type="text"]:focus {
   transition: width 0.3s ease-in-out;
 }
 
+/* Standardowy kolor procentu (tryb jasny) */
+.progress-container span {
+  color: #333; /* Ciemny kolor tekstu */
+  font-weight: bold;
+}
+
+/* Tryb ciemny - ciemniejsza czcionka dla lepszej widoczności */
+.dark-mode .progress-container span {
+  color: #111; /* Jeszcze ciemniejszy kolor w trybie ciemnym */
+}
+
 /* Odliczanie 5s w lobby */
 .countdown-container {
   margin-top: 20px;
@@ -230,4 +241,113 @@ input[type="text"]:focus {
   background-color: #4caf50;
   width: 100%;
   transition: width 1s linear;
+}
+
+/* Pozycjonowanie przełącznika i ikon */
+.theme-toggle {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Ikonki słońca i księżyca */
+.theme-icon {
+  font-size: 18px;
+}
+
+/* Ukrywamy domyślny checkbox */
+#themeSwitch {
+  display: none;
+}
+
+/* Styl przełącznika */
+.toggle-label {
+  display: block;
+  width: 50px;
+  height: 25px;
+  background-color: #ccc;
+  border-radius: 25px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+/* Kółko w przełączniku */
+.toggle-label::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2.5px;
+  left: 3px;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Zmiana wyglądu przełącznika w trybie ciemnym */
+#themeSwitch:checked + .toggle-label {
+  background: #4caf50;
+}
+
+#themeSwitch:checked + .toggle-label::before {
+  transform: translateX(25px);
+}
+
+/* Styl napisu "Tryb ciemny"/"Tryb jasny" */
+#themeText {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  transition: color 0.3s ease-in-out;
+}
+
+/* W trybie ciemnym zmieniamy kolor napisu na biały */
+.dark-mode #themeText {
+  color: #fff;
+}
+
+/* Styl trybu ciemnego */
+.dark-mode {
+  background: #222;
+  color: white;
+}
+
+.dark-mode .container {
+  background: #333;
+  color: white;
+}
+
+/* Poprawka – kod gry w trybie ciemnym */
+.dark-mode .game-code {
+  background-color: #444;
+  color: #fff;
+  border: 2px dashed #777;
+}
+
+/* Styl stopki */
+.footer {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: #666;
+  font-weight: bold;
+}
+
+/* Stopka w trybie ciemnym */
+.dark-mode .footer {
+  color: #aaa;
+}
+
+/* Blokowanie zaznaczania tekstu w polu do przepisywania */
+#textToType {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }

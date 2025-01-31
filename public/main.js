@@ -38,6 +38,9 @@ const textToTypeEl = document.getElementById('textToType');
 const opponentProgressEl = document.getElementById('opponentProgress');
 const returnToMenuBtn = document.getElementById('returnToMenuBtn');
 
+const themeSwitch = document.getElementById('themeSwitch');
+const themeText = document.getElementById('themeText');
+
 // Nowe: element wyświetlający czas pisania
 const finalTimeEl = document.getElementById('finalTime');
 
@@ -273,4 +276,34 @@ socket.on('hostLeft', () => {
 // Błędy
 socket.on('errorMsg', (msg) => {
   infoEl.innerText = msg;
+});
+
+// Sprawdzenie, czy użytkownik miał wcześniej włączony tryb ciemny
+if (localStorage.getItem('darkMode') === 'enabled') {
+  document.body.classList.add('dark-mode');
+  themeSwitch.checked = true;
+  themeText.textContent = "Tryb jasny"; // Zmiana tekstu na "Tryb jasny"
+}
+
+// Obsługa przełącznika trybu ciemnego
+themeSwitch.addEventListener('change', () => {
+  if (themeSwitch.checked) {
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('darkMode', 'enabled');
+      themeText.textContent = "Tryb jasny"; // Gdy przełączamy na ciemny
+  } else {
+      document.body.classList.remove('dark-mode');
+      localStorage.setItem('darkMode', 'disabled');
+      themeText.textContent = "Tryb ciemny"; // Gdy przełączamy na jasny
+  }
+});
+
+// Zablokowanie kopiowania (CTRL + C, klik prawym)
+typedTextEl.addEventListener("copy", (e) => {
+  e.preventDefault();
+});
+
+// Zablokowanie wklejania (CTRL + V, klik prawym)
+typedTextEl.addEventListener("paste", (e) => {
+  e.preventDefault();
 });

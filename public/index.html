@@ -7,6 +7,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
+  <div class="theme-toggle">
+    <span id="themeText">Tryb ciemny</span>
+    <span class="theme-icon">☀️</span>
+    <input type="checkbox" id="themeSwitch">
+    <label for="themeSwitch" class="toggle-label"></label>
+    <span class="theme-icon">🌙</span>
+  </div>
+
   <div class="container">
 
     <!-- Strona powitalna -->
@@ -102,5 +110,10 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="main.js"></script>
+
+  <footer class="footer">
+    Coded by Mateusz Michel
+  </footer>
+
 </body>
 </html>
