@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gra w szybkie pisanie</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+
+    <!-- Strona powitalna -->
+    <div id="pageIntro" class="page">
+      <h1 class="title text-center">Gra w szybkie pisanie</h1>
+      <p class="text-center">Wybierz jedną z opcji:</p>
+      <div class="btn-group text-center">
+        <button id="createGameBtn" class="btn">Stwórz grę</button>
+        <button id="goToJoinBtn" class="btn">Dołącz do gry</button>
+      </div>
+    </div>
+
+    <!-- Ekran wpisywania nicku (tylko dla hosta) -->
+    <div id="pageNickname" class="page hidden">
+      <h2 class="text-center">Podaj swój nick (Host)</h2>
+      <div class="text-center">
+        <input type="text" id="nicknameInput" placeholder="Twój nick" />
+        <button id="confirmNicknameBtn" class="btn">Dalej</button>
+      </div>
+    </div>
+
+    <!-- Ekran dołączenia do gry: kod + nick -->
+    <div id="pageJoin" class="page hidden">
+      <h2 class="text-center">Dołącz do gry</h2>
+      <div class="text-center">
+        <input type="text" id="joinCodeInput" placeholder="Kod gry" />
+      </div>
+      <div class="text-center">
+        <input type="text" id="joinNicknameInput" placeholder="Twój nick" />
+      </div>
+      <div class="text-center">
+        <button id="confirmJoinBtn" class="btn">Dołącz</button>
+      </div>
+    </div>
+
+    <!-- Lobby -->
+    <div id="pageLobby" class="page hidden">
+      <h2 class="text-center">Lobby</h2>
+      <p id="gameCodeDisplay" class="game-code"></p>
+
+      <div class="text-center">
+        <button id="regenerateCodeBtn" class="btn hidden">Wygeneruj nowy kod</button>
+      </div>
+
+      <div class="players-status-container text-center">
+        <span id="hostStatus"></span>
+        <span id="playerStatus"></span>
+      </div>
+
+      <div class="text-center" style="margin-top: 15px;">
+        <button id="readyBtn" class="btn">Gotowy</button>
+      </div>
+      <div class="text-center" style="margin-top: 8px;">
+        <button id="startGameBtn" class="btn hidden">Rozpocznij grę (tylko host)</button>
+      </div>
+
+      <!-- Odliczanie 5s -->
+      <div id="countdownContainer" class="countdown-container hidden text-center">
+        <div id="countdownNumber" class="countdown-number">5</div>
+        <div class="countdown-bar">
+          <div id="countdownBarProgress" class="countdown-bar-progress"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Główna gra -->
+    <div id="pageGame" class="page hidden">
+      <h2 class="text-center">Przepisz tekst najszybciej, jak potrafisz!</h2>
+
+      <div id="textContainer" class="text-container">
+        <div id="textToType" class="big-text"></div>
+      </div>
+
+      <div class="text-center">
+        <input type="text" id="typedText" class="typing-input" placeholder="Tutaj pisz..." />
+      </div>
+
+      <h3 id="winner" class="text-center"></h3>
+
+      <!-- Nowe: wyświetlanie czasu pisania -->
+      <h4 id="finalTime" class="text-center"></h4>
+
+      <div class="text-center">
+        <button id="returnToMenuBtn" class="btn hidden">Powrót do menu</button>
+      </div>
+
+      <h4 class="text-center">Postęp przeciwnika:</h4>
+      <div id="opponentProgress" class="progress-container text-center"></div>
+    </div>
+
+    <div id="info" class="text-center error-msg"></div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
