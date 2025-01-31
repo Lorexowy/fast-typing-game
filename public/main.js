@@ -232,6 +232,10 @@ socket.on('typingError', () => {
     typedTextEl.classList.remove('flash-error');
     textToTypeEl.classList.remove('flash-error-text'); // Usunięcie podświetlenia
   }, 500);
+
+  document.body.classList.add("shake");
+  setTimeout(() => document.body.classList.remove("shake"), 300);
+
 });
 
 // Nasz postęp
