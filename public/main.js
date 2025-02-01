@@ -44,6 +44,8 @@ const themeText = document.getElementById('themeText');
 const giveUpBtn = document.getElementById('giveUpBtn');
 const difficultySelect = document.getElementById('difficultySelect');
 
+const menuBtns = document.querySelectorAll('.menuBtn');
+
 // Nowe: element wyświetlający czas pisania
 const finalTimeEl = document.getElementById('finalTime');
 
@@ -389,4 +391,23 @@ const langToggleBtn = document.getElementById('langToggleBtn');
 langToggleBtn.addEventListener('click', () => {
   currentLang = (currentLang === 'pl') ? 'en' : 'pl';
   updateLanguage(currentLang);
+});
+
+menuBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    gameEnded = false;
+    giveUpBtn.disabled = false;
+    currentGameCode = null;
+    originalText = "";
+    typedLength = 0;
+    startTime = null;
+    
+    // Wyczyszczenie komunikatów i pola tekstowego
+    infoEl.innerText = "";
+    winnerEl.innerText = "";
+    finalTimeEl.innerText = "";
+    typedTextEl.value = "";
+    
+    showPage('pageIntro');
+  });
 });
