@@ -42,7 +42,6 @@ const themeSwitch = document.getElementById('themeSwitch');
 const themeText = document.getElementById('themeText');
 
 const giveUpBtn = document.getElementById('giveUpBtn');
-
 const difficultySelect = document.getElementById('difficultySelect');
 
 // Nowe: element wyświetlający czas pisania
@@ -54,6 +53,10 @@ let isHost = false;
 let originalText = "";
 let typedLength = 0;
 let gameEnded = false;
+
+// Ustawiamy domyślne wartości nickname'ów
+let hostNickname = "Host";
+let playerNickname = "Gracz";
 
 // Zmienna do pomiaru czasu
 let startTime = null;
@@ -67,13 +70,9 @@ function showPage(pageId) {
 
 // Powrót do menu
 returnToMenuBtn.addEventListener('click', () => {
-  // Resetujemy flagę, aby w nowej grze przycisk "Poddaj się" był aktywny
   gameEnded = false;
   giveUpBtn.disabled = false;
-  
-  // Opcjonalnie można też wyzerować currentGameCode, jeśli to jest potrzebne
   currentGameCode = null;
-  
   showPage('pageIntro');
 });
 
@@ -94,6 +93,7 @@ confirmNicknameBtn.addEventListener('click', () => {
     alert('Wpisz swój nick.');
     return;
   }
+  hostNickname = nickname; // aktualizujemy nick hosta
   socket.emit('createGame', nickname);
 });
 
@@ -105,15 +105,16 @@ confirmJoinBtn.addEventListener('click', () => {
     alert('Wpisz kod i nick.');
     return;
   }
+  playerNickname = nick; // aktualizujemy nick gracza
   socket.emit('joinGame', { gameCode: code, nickname: nick });
 });
 
-// gameCreated
+// gameCreated - wysyłane do hosta po utworzeniu gry
 socket.on('gameCreated', (gameCode) => {
   currentGameCode = gameCode;
   showPage('pageLobby');
-  gameCodeDisplay.innerText = `Kod Twojej gry: ${gameCode}`;
-
+  // Używamy tłumaczenia dla etykiety kodu gry
+  gameCodeDisplay.innerText = `${translations[currentLang].gameCodeLabel} ${gameCode}`;
   if (isHost) {
     regenerateCodeBtn.classList.remove('hidden');
     document.getElementById('hostModifications').classList.remove('hidden');
@@ -121,12 +122,13 @@ socket.on('gameCreated', (gameCode) => {
   updateReadyDisplay(false, false);
 });
 
-// joinedGame
-socket.on('joinedGame', (gameCode) => {
-  currentGameCode = gameCode;
+// joinedGame - wysyłane do gracza po dołączeniu do gry; dodatkowo przekazujemy hostNickname
+socket.on('joinedGame', (data) => {
+  currentGameCode = data.gameCode;
+  // Ustawiamy hostNickname na podstawie danych od serwera
+  hostNickname = data.hostNickname;
   showPage('pageLobby');
-  gameCodeDisplay.innerText = `Dołączyłeś do gry o kodzie: ${gameCode}`;
-
+  gameCodeDisplay.innerText = `${translations[currentLang].gameCodeLabel} ${data.gameCode}`;
   regenerateCodeBtn.classList.add('hidden');
   document.getElementById('hostModifications').classList.add('hidden');
   updateReadyDisplay(false, false);
@@ -134,16 +136,23 @@ socket.on('joinedGame', (gameCode) => {
 
 // Ktoś dołączył (host widzi)
 socket.on('playerJoined', (nickname) => {
-  infoEl.innerText = `Gracz ${nickname} dołączył do gry.`;
+  playerNickname = nickname;
+  if(currentLang === 'pl'){
+    infoEl.innerText = `Gracz ${nickname} dołączył do gry.`;
+  } else {
+    infoEl.innerText = `Player ${nickname} joined the game.`;
+  }
+  updateReadyDisplay(false, false);
 });
 
-// Labelka gotowości
+// Funkcja aktualizująca status gotowości z wykorzystaniem nickname'ów
 function updateReadyDisplay(hostReady, playerReady) {
-  hostStatusEl.innerHTML = `Host: <span class="${hostReady ? 'ready-label' : 'not-ready-label'}">
-    ${hostReady ? 'Gotowy' : 'Niegotowy'}
+  hostStatusEl.innerHTML = `${hostNickname}: <span class="${hostReady ? 'ready-label' : 'not-ready-label'}">
+    ${hostReady ? translations[currentLang].ready : translations[currentLang].notReady}
   </span>`;
-  playerStatusEl.innerHTML = `Gracz: <span class="${playerReady ? 'ready-label' : 'not-ready-label'}">
-    ${playerReady ? 'Gotowy' : 'Niegotowy'}
+  
+  playerStatusEl.innerHTML = `${playerNickname}: <span class="${playerReady ? 'ready-label' : 'not-ready-label'}">
+    ${playerReady ? translations[currentLang].ready : translations[currentLang].notReady}
   </span>`;
 }
 
@@ -154,8 +163,8 @@ regenerateCodeBtn.addEventListener('click', () => {
 
 socket.on('codeRegenerated', (newCode) => {
   currentGameCode = newCode;
-  gameCodeDisplay.innerText = `Nowy kod Twojej gry: ${newCode}`;
-  infoEl.innerText = "Wygenerowano nowy kod! Poprzedni jest nieaktywny.";
+  gameCodeDisplay.innerText = `${translations[currentLang].newGameCodeLabel} ${newCode}`;
+  infoEl.innerText = translations[currentLang].newGameGenerated;
   updateReadyDisplay(false, false);
 });
 
@@ -178,9 +187,7 @@ socket.on('updateReadyStatus', ({ hostReady, playerReady }) => {
 // Host startuje => serwer odlicza
 startGameBtn.addEventListener('click', () => {
   if (!currentGameCode) return;
-  // Pobieramy wartość wybraną przez hosta
-  const difficulty = document.getElementById('difficultySelect').value;
-  // Wysyłamy obiekt zawierający kod gry oraz poziom trudności
+  const difficulty = difficultySelect.value;
   socket.emit('startGame', { gameCode: currentGameCode, difficulty });
 });
 
@@ -188,7 +195,6 @@ startGameBtn.addEventListener('click', () => {
 socket.on('countdown', (time) => {
   countdownContainer.classList.remove('hidden');
   countdownNumber.textContent = time;
-
   let percent = (time / 5) * 100;
   if (percent < 0) percent = 0;
   countdownBarProgress.style.width = `${percent}%`;
@@ -196,15 +202,12 @@ socket.on('countdown', (time) => {
 
 // Gra się faktycznie rozpoczyna
 socket.on('gameStarted', (text) => {
-  // chowamy countdown
   countdownContainer.classList.add('hidden');
   countdownNumber.textContent = "5";
   countdownBarProgress.style.width = "100%";
-
   originalText = text;
   typedLength = 0;
   showPage('pageGame');
-
   textToTypeEl.innerHTML = "";
   updateDisplayedText();
   typedTextEl.value = "";
@@ -213,8 +216,6 @@ socket.on('gameStarted', (text) => {
   opponentProgressEl.innerHTML = "";
   returnToMenuBtn.classList.add('hidden');
   finalTimeEl.innerText = "";
-
-  // Startujemy licznik czasu (lokalnie)
   startTime = Date.now();
 });
 
@@ -222,31 +223,19 @@ socket.on('gameStarted', (text) => {
 function updateDisplayedText() {
   const containerWidth = textToTypeEl.parentElement.offsetWidth;
   const middlePosition = containerWidth / 2;
-  
   const typedPart = originalText.substring(0, typedLength);
   const currentChar = originalText[typedLength] || '';
   const remainingPart = originalText.substring(typedLength + 1);
-
-  // Nowa struktura z zachowaniem Twoich kolorów
   textToTypeEl.innerHTML = `
     <span style="color: green">${typedPart}</span><span class="current-char">${currentChar}</span><span>${remainingPart}</span>
   `;
-
-  // Znajdź elementy po renderowaniu
   const currentCharEl = textToTypeEl.querySelector('.current-char');
-  const allTextEl = textToTypeEl.firstElementChild.parentElement;
-
   if (currentCharEl) {
-    // Oblicz przesunięcie
     const charLeft = currentCharEl.offsetLeft;
     const charWidth = currentCharEl.offsetWidth;
     const targetPosition = middlePosition - (charLeft + charWidth/2);
-    
-    // Zastosuj przesunięcie
     textToTypeEl.style.transform = `translateX(${targetPosition}px)`;
   }
-
-  // Fallback dla pustego tekstu
   if (typedLength === 0) {
     textToTypeEl.style.transform = `translateX(0)`;
   }
@@ -256,8 +245,6 @@ function updateDisplayedText() {
 typedTextEl.addEventListener('input', () => {
   const value = typedTextEl.value;
   socket.emit('typedText', { gameCode: currentGameCode, typedText: value });
-  
-  // Wymuś ponowne obliczenie układu
   setTimeout(() => updateDisplayedText(), 0);
 });
 
@@ -265,16 +252,13 @@ typedTextEl.addEventListener('input', () => {
 socket.on('typingError', () => {
   typedTextEl.value = "";
   typedTextEl.classList.add('flash-error');
-  textToTypeEl.classList.add('flash-error-text'); // Dodanie klasy do tekstu
-
+  textToTypeEl.classList.add('flash-error-text');
   setTimeout(() => {
     typedTextEl.classList.remove('flash-error');
-    textToTypeEl.classList.remove('flash-error-text'); // Usunięcie podświetlenia
+    textToTypeEl.classList.remove('flash-error-text');
   }, 500);
-
   document.body.classList.add("shake");
   setTimeout(() => document.body.classList.remove("shake"), 300);
-
 });
 
 // Nasz postęp
@@ -286,42 +270,22 @@ socket.on('yourProgress', ({ correctCount }) => {
 // Koniec gry
 socket.on('gameFinished', (data) => {
   let winnerSocketId, surrendered = false;
-  
-  // Sprawdzamy, czy otrzymaliśmy obiekt
   if (typeof data === 'object' && data !== null) {
     winnerSocketId = data.winnerSocketId;
     surrendered = data.surrendered;
   } else {
     winnerSocketId = data;
   }
-  
-  // Liczymy czas gry
   const endTime = Date.now();
   const totalSeconds = ((endTime - startTime) / 1000).toFixed(2);
-  
-  // Ustalamy komunikaty w zależności od tego, czy gra zakończyła się przez poddanie
   if (winnerSocketId === socket.id) {
-    // Ja jestem zwycięzcą
-    if (surrendered) {
-      winnerEl.innerText = "Gratulacje! Wygrałeś, przeciwnik się poddał!";
-    } else {
-      winnerEl.innerText = "Gratulacje! Wygrałeś!";
-    }
+    winnerEl.innerText = surrendered ? "Gratulacje! Wygrałeś, przeciwnik się poddał!" : "Gratulacje! Wygrałeś!";
     finalTimeEl.innerText = `Twój czas: ${totalSeconds} s`;
   } else {
-    // Ja przegrywam
-    if (surrendered) {
-      winnerEl.innerText = "Niestety, przegrywasz poprzez poddanie.";
-    } else {
-      winnerEl.innerText = "Niestety, przegrywasz wyścig.";
-    }
+    winnerEl.innerText = surrendered ? "Niestety, przegrywasz poprzez poddanie." : "Niestety, przegrywasz wyścig.";
     finalTimeEl.innerText = `Twój czas: ${totalSeconds} s`;
   }
-  
-  // Wyświetlamy przycisk do powrotu do menu
   returnToMenuBtn.classList.remove('hidden');
-
-  // Ustawiamy flagę, że gra się zakończyła oraz dezaktywujemy przycisk "Poddaj się"
   gameEnded = true;
   giveUpBtn.disabled = true;
 });
@@ -351,7 +315,7 @@ socket.on('errorMsg', (msg) => {
 if (localStorage.getItem('darkMode') === 'enabled') {
   document.body.classList.add('dark-mode');
   themeSwitch.checked = true;
-  themeText.textContent = "Tryb jasny"; // Zmiana tekstu na "Tryb jasny"
+  themeText.textContent = "Tryb jasny";
 }
 
 // Obsługa przełącznika trybu ciemnego
@@ -359,11 +323,11 @@ themeSwitch.addEventListener('change', () => {
   if (themeSwitch.checked) {
       document.body.classList.add('dark-mode');
       localStorage.setItem('darkMode', 'enabled');
-      themeText.textContent = "Tryb jasny"; // Gdy przełączamy na ciemny
+      themeText.textContent = translations[currentLang].switchToLight;
   } else {
       document.body.classList.remove('dark-mode');
       localStorage.setItem('darkMode', 'disabled');
-      themeText.textContent = "Tryb ciemny"; // Gdy przełączamy na jasny
+      themeText.textContent = translations[currentLang].switchToDark;
   }
 });
 
@@ -385,10 +349,42 @@ giveUpBtn.addEventListener('click', () => {
   socket.emit('giveUp', currentGameCode);
 });
 
+// Obsługa zmiany poziomu trudności
 difficultySelect.addEventListener('change', () => {
   if (currentGameCode) {
     const newDifficulty = difficultySelect.value;
-    // Wysyłamy zdarzenie aktualizujące poziom trudności do serwera
     socket.emit('updateDifficulty', { gameCode: currentGameCode, difficulty: newDifficulty });
   }
+});
+
+// Aktualizacja języka
+function updateLanguage(lang) {
+  const elements = document.querySelectorAll('[data-i18n]');
+  elements.forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (translations[lang] && translations[lang][key]) {
+      el.textContent = translations[lang][key];
+    }
+  });
+  const placeholderElements = document.querySelectorAll('[data-i18n-placeholder]');
+  placeholderElements.forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (translations[lang] && translations[lang][key]) {
+      el.setAttribute('placeholder', translations[lang][key]);
+    }
+  });
+  const langToggleBtn = document.getElementById('langToggleBtn');
+  if (langToggleBtn && translations[lang] && translations[lang].langToggleBtn) {
+    langToggleBtn.textContent = translations[lang].langToggleBtn;
+  }
+  localStorage.setItem('gameLang', lang);
+}
+
+let currentLang = localStorage.getItem('gameLang') || 'pl';
+updateLanguage(currentLang);
+
+const langToggleBtn = document.getElementById('langToggleBtn');
+langToggleBtn.addEventListener('click', () => {
+  currentLang = (currentLang === 'pl') ? 'en' : 'pl';
+  updateLanguage(currentLang);
 });

@@ -1,5 +1,4 @@
 // server.js
-
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -34,8 +33,8 @@ io.on('connection', (socket) => {
       playerNickname: null,
       hostReady: false,
       playerReady: false,
-      gameStarted: false,        // =true dopiero po zakończeniu odliczania
-      countdownInProgress: false,// =true podczas 5-sek. odliczania
+      gameStarted: false,
+      countdownInProgress: false,
       originalText: ""
     };
     socket.join(code);
@@ -51,7 +50,8 @@ io.on('connection', (socket) => {
       socket.join(gameCode);
 
       io.to(game.host).emit('playerJoined', nickname);
-      socket.emit('joinedGame', gameCode);
+      // Wysyłamy obiekt z gameCode i hostNickname do klienta-gracza
+      socket.emit('joinedGame', { gameCode, hostNickname: game.hostNickname });
     } else {
       socket.emit('errorMsg', 'Nie można dołączyć: kod niepoprawny, gra pełna lub już wystartowała.');
     }
@@ -67,18 +67,13 @@ io.on('connection', (socket) => {
         break;
       }
     }
-
     if (!oldCode) {
       socket.emit('errorMsg', 'Nie można wygenerować nowego kodu – gra już wystartowała lub nie jesteś hostem.');
       return;
     }
-
     const oldGame = games[oldCode];
-    // Powiadamiamy stary pokój, że gra nie istnieje
     io.in(oldCode).emit('errorMsg', 'Gra już nie istnieje. Host się rozłączył.');
     io.in(oldCode).emit('hostLeft');
-
-    // Tworzymy nowy kod i nową grę
     const newCode = generateGameCode();
     games[newCode] = {
       host: socket.id,
@@ -91,12 +86,9 @@ io.on('connection', (socket) => {
       countdownInProgress: false,
       originalText: ""
     };
-
-    // Usuwamy starą
     delete games[oldCode];
     socket.leave(oldCode);
     socket.join(newCode);
-
     socket.emit('codeRegenerated', newCode);
   });
 
@@ -109,7 +101,6 @@ io.on('connection', (socket) => {
     } else if (socket.id === game.player) {
       game.playerReady = true;
     }
-
     io.in(gameCode).emit('updateReadyStatus', {
       hostReady: game.hostReady,
       playerReady: game.playerReady
@@ -118,15 +109,10 @@ io.on('connection', (socket) => {
 
   // Host kliknął "Rozpocznij grę" => 5s countdown
   socket.on('startGame', (data) => {
-    // Odbieramy dane jako obiekt: { gameCode, difficulty }
     const gameCode = data.gameCode;
     const game = games[gameCode];
     if (!game) return;
-  
-    // Używamy aktualnego poziomu trudności zapisanej w grze,
-    // a jeśli nie jest ustawiona, używamy przekazanej wartości
     const difficulty = game.difficulty || data.difficulty;
-    
     if (
       socket.id === game.host &&
       game.hostReady &&
@@ -136,28 +122,22 @@ io.on('connection', (socket) => {
     ) {
       game.countdownInProgress = true;
       let counter = 5;
-    
       const intervalId = setInterval(() => {
         io.in(gameCode).emit('countdown', counter);
         counter--;
-    
         if (counter < 0) {
           clearInterval(intervalId);
           game.gameStarted = true;
           game.countdownInProgress = false;
-    
-          // Filtrujemy teksty według aktualnego poziomu trudności
           let textsForDifficulty = textsArray.filter(t => t.difficulty === difficulty);
           if (textsForDifficulty.length === 0) {
             textsForDifficulty = textsArray;
           }
           const idx = Math.floor(Math.random() * textsForDifficulty.length);
           game.originalText = textsForDifficulty[idx].text;
-    
           io.in(gameCode).emit('gameStarted', game.originalText);
         }
       }, 1000);
-    
     } else {
       socket.emit('errorMsg', 'Nie można wystartować – sprawdź gotowość albo gra już wystartowała.');
     }
@@ -167,7 +147,6 @@ io.on('connection', (socket) => {
   socket.on('typedText', ({ gameCode, typedText }) => {
     const game = games[gameCode];
     if (!game || !game.gameStarted) return;
-
     const original = game.originalText;
     let correctCount = 0;
     for (let i = 0; i < typedText.length; i++) {
@@ -182,8 +161,6 @@ io.on('connection', (socket) => {
       playerId: socket.id,
       typedLength: correctCount
     });
-
-    // Sprawdzenie, czy gracz ukończył cały tekst
     if (typedText === original) {
       io.in(gameCode).emit('gameFinished', socket.id);
     } else if (!original.startsWith(typedText)) {
@@ -207,25 +184,16 @@ io.on('connection', (socket) => {
   socket.on('giveUp', (gameCode) => {
     const game = games[gameCode];
     if (!game) return;
-    
     let winnerSocketId = null;
-    
-    // Jeśli host się poddaje, wygrywa gracz (jeśli już dołączył)
     if (socket.id === game.host) {
       winnerSocketId = game.player;
-    } 
-    // Jeśli gracz poddaje się, wygrywa host
-    else if (socket.id === game.player) {
+    } else if (socket.id === game.player) {
       winnerSocketId = game.host;
     }
-    
-    // Jeśli z jakiegoś powodu nie ma przeciwnika (np. gracz jeszcze nie dołączył), można zignorować lub wysłać komunikat
     if (!winnerSocketId) {
       socket.emit('errorMsg', 'Nie ma przeciwnika lub gra jeszcze nie rozpoczęła się.');
       return;
     }
-    
-    // Emitujemy zdarzenie zakończenia gry do wszystkich graczy w pokoju
     io.in(gameCode).emit('gameFinished', { winnerSocketId, surrendered: true });
   });
 
@@ -233,10 +201,8 @@ io.on('connection', (socket) => {
     const { gameCode, difficulty } = data;
     const game = games[gameCode];
     if (!game) return;
-    // Aktualizujemy poziom trudności w obiekcie gry
     game.difficulty = difficulty;
   });
-
 });
 
 server.listen(3000, () => {

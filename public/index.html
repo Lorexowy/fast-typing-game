@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <title>Gra w szybkie pisanie</title>
+  <title data-i18n="pageTitle">Gra w szybkie pisanie</title>
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
@@ -10,62 +10,65 @@
 
   <!-- contener opcji-->
   <div class="options-container">
-    <h3>Opcje gry</h3>
+    <h3 data-i18n="optionsGame">Opcje gry</h3>
 
     <!-- przełącznik motywu strony na ciemny i jasny-->
     <div class="theme-toggle">
-      <span id="themeText">Tryb ciemny</span>
+      <span id="themeText" data-i18n="themeToggle">Tryb ciemny</span>
       <span class="theme-icon">☀️</span>
       <input type="checkbox" id="themeSwitch">
       <label for="themeSwitch" class="toggle-label"></label>
       <span class="theme-icon">🌙</span>
     </div>
 
-    <p class="opt-placeholder">Tutaj będą pojawiały się opcje gry...</p>
+    <!-- Nowy przycisk zmiany języka -->
+    <button id="langToggleBtn" class="btn" data-i18n="langToggleBtn">Switch to English</button>
+
+    <p class="opt-placeholder" data-i18n="optionsPlaceholder">Tutaj będą pojawiały się opcje gry...</p>
   </div>
 
   <div class="container">
 
     <!-- Strona powitalna -->
     <div id="pageIntro" class="page">
-      <h1 class="title text-center">Gra w szybkie pisanie</h1>
-      <p class="text-center">Wybierz jedną z opcji:</p>
+      <h1 class="title text-center" data-i18n="gameTitle">Gra w szybkie pisanie</h1>
+      <p class="text-center" data-i18n="introOptions">Wybierz jedną z opcji:</p>
       <div class="btn-group text-center">
-        <button id="createGameBtn" class="btn">Stwórz grę</button>
-        <button id="goToJoinBtn" class="btn">Dołącz do gry</button>
+        <button id="createGameBtn" class="btn" data-i18n="createGame">Stwórz grę</button>
+        <button id="goToJoinBtn" class="btn" data-i18n="joinGame">Dołącz do gry</button>
       </div>
     </div>
 
     <!-- Ekran wpisywania nicku (tylko dla hosta) -->
     <div id="pageNickname" class="page hidden">
-      <h2 class="text-center">Podaj swój nick</h2>
+      <h2 class="text-center" data-i18n="enterNickname">Podaj swój nick</h2>
       <div class="text-center">
-        <input type="text" id="nicknameInput" placeholder="Twój nick" />
-        <button id="confirmNicknameBtn" class="btn">Dalej</button>
+        <input type="text" id="nicknameInput" placeholder="Twój nick" data-i18n-placeholder="nicknamePlaceholder" />
+        <button id="confirmNicknameBtn" class="btn" data-i18n="next">Dalej</button>
       </div>
     </div>
 
     <!-- Ekran dołączenia do gry: kod + nick -->
     <div id="pageJoin" class="page hidden">
-      <h2 class="text-center">Dołącz do gry</h2>
+      <h2 class="text-center" data-i18n="joinGameTitle">Dołącz do gry</h2>
       <div class="text-center">
-        <input type="text" id="joinCodeInput" placeholder="Kod gry" />
+        <input type="text" id="joinCodeInput" placeholder="Kod gry" data-i18n-placeholder="gameCodePlaceholder" />
       </div>
       <div class="text-center">
-        <input type="text" id="joinNicknameInput" placeholder="Twój nick" />
+        <input type="text" id="joinNicknameInput" placeholder="Twój nick" data-i18n-placeholder="nicknamePlaceholder" />
       </div>
       <div class="text-center">
-        <button id="confirmJoinBtn" class="btn">Dołącz</button>
+        <button id="confirmJoinBtn" class="btn" data-i18n="join">Dołącz</button>
       </div>
     </div>
 
     <!-- Lobby -->
     <div id="pageLobby" class="page hidden">
-      <h2 class="text-center">Lobby</h2>
+      <h2 class="text-center" data-i18n="lobbyTitle">Lobby</h2>
       <p id="gameCodeDisplay" class="game-code"></p>
 
       <div class="text-center">
-        <button id="regenerateCodeBtn" class="btn hidden">Wygeneruj nowy kod</button>
+        <button id="regenerateCodeBtn" class="btn hidden" data-i18n="regenerateCode">Wygeneruj nowy kod</button>
       </div>
 
       <div class="players-status-container text-center">
@@ -74,31 +77,29 @@
       </div>
 
       <div class="text-center" style="margin-top: 15px;">
-        <button id="readyBtn" class="btn">Gotowy</button>
+        <button id="readyBtn" class="btn" data-i18n="ready">Gotowy</button>
       </div>
       <div class="text-center" style="margin-top: 8px;">
-        <button id="startGameBtn" class="btn hidden">Rozpocznij grę</button>
+        <button id="startGameBtn" class="btn hidden" data-i18n="startGame">Rozpocznij grę</button>
       </div>
 
       <!-- Pole modyfikacje dla hosta dla modyfikacji gry -->
       <div id="hostModifications" class="host-modifications hidden">
-        <h3 class="text-center">Modyfikacje</h3>
+        <h3 class="text-center" data-i18n="modifications">Modyfikacje</h3>
         <div class="modifications-content">
-
           <!-- wybór poziomu trudności -->
           <div class="custom-select-wrapper">
-            <label for="difficultySelect">Poziom trudności:</label>
+            <label for="difficultySelect" data-i18n="difficultyLevel">Poziom trudności:</label>
             <div class="custom-select">
               <select id="difficultySelect">
-                <option value="easy">Łatwy</option>
-                <option value="medium" selected>Średni</option>
-                <option value="hard">Trudny</option>
+                <option value="easy" data-i18n="easy">Łatwy</option>
+                <option value="medium" selected data-i18n="medium">Średni</option>
+                <option value="hard" data-i18n="hard">Trudny</option>
               </select>
             </div>
           </div>
-
           <!-- Tutaj później dodasz elementy konfiguracyjne -->
-          <p class="mod-placeholder">Opcje będą dostępne wkrótce!</p>
+          <p class="mod-placeholder" data-i18n="modPlaceholder">Opcje będą dostępne wkrótce!</p>
         </div>
       </div>
 
@@ -113,14 +114,14 @@
 
     <!-- Główna gra -->
     <div id="pageGame" class="page hidden">
-      <h2 class="text-center">Przepisz tekst najszybciej, jak potrafisz!</h2>
+      <h2 class="text-center" data-i18n="gameInstruction">Przepisz tekst najszybciej, jak potrafisz!</h2>
 
       <div id="textContainer" class="text-container">
         <div id="textToType" class="big-text"></div>
       </div>
 
       <div class="text-center">
-        <input type="text" id="typedText" class="typing-input" placeholder="Tutaj pisz..." />
+        <input type="text" id="typedText" class="typing-input" placeholder="Tutaj pisz..." data-i18n-placeholder="typeHere" />
       </div>
 
       <h3 id="winner" class="text-center"></h3>
@@ -129,27 +130,26 @@
       <h4 id="finalTime" class="text-center"></h4>
 
       <div class="text-center">
-        <button id="returnToMenuBtn" class="btn hidden">Powrót do menu</button>
+        <button id="returnToMenuBtn" class="btn hidden" data-i18n="returnToMenu">Powrót do menu</button>
       </div>
 
-      <h4 class="text-center">Postęp przeciwnika:</h4>
+      <h4 class="text-center" data-i18n="opponentProgressLabel">Postęp przeciwnika:</h4>
       <div id="opponentProgress" class="progress-container text-center"></div>
 
       <!-- Dodajemy przycisk "Poddaj się" -->
       <div class="text-center" style="margin-top: 10px;">
-        <button id="giveUpBtn" class="btn">Poddaj się</button>
+        <button id="giveUpBtn" class="btn" data-i18n="giveUp">Poddaj się</button>
       </div>
-
     </div>
-
 
     <div id="info" class="text-center error-msg"></div>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
+  <script src="translations.js"></script>
   <script src="main.js"></script>
 
-  <footer class="footer">
+  <footer class="footer" data-i18n="footerCredit">
     Coded by Mateusz Michel
   </footer>
 
