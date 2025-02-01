@@ -507,3 +507,53 @@ input[type="text"]:focus {
   color: #7f8c8d;
   text-align: center;
 }
+
+/* Kontener dla etykiety i selecta */
+.custom-select-wrapper {
+  display: flex;
+  flex-direction: column;  /* elementy w kolumnie */
+  align-items: center; /* lub center, w zależności od preferencji */
+  gap: 4px;              /* odstęp między etykietą a polem */
+  margin-top: 10px;       /* opcjonalnie, aby dodać odstęp od reszty */
+}
+
+/* Kontener dla samego selecta */
+.custom-select {
+  position: relative;
+  width: 80%; /* Możesz dostosować szerokość */
+}
+
+/* Stylizacja samego selecta */
+.custom-select select {
+  appearance: none;               /* Usuwa domyślny wygląd */
+  -webkit-appearance: none;       /* Dla przeglądarek WebKit */
+  -moz-appearance: none;          /* Dla Firefoxa */
+  width: 100%;
+  padding: 8px 40px 8px 12px;      /* Duży odstęp z prawej na strzałkę */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+/* Efekt przy fokusie */
+.custom-select select:focus {
+  outline: none;
+  border-color: #4caf50;
+  background-color: #f9fff9;
+}
+
+/* Dodajemy niestandardową strzałkę */
+.custom-select::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #4caf50;
+  pointer-events: none;
+}
