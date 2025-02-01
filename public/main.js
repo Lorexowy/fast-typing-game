@@ -211,6 +211,7 @@ socket.on('gameStarted', (text) => {
   textToTypeEl.innerHTML = "";
   updateDisplayedText();
   typedTextEl.value = "";
+  typedTextEl.disabled = false; // Upewnij się, że pole tekstowe jest aktywne
   typedTextEl.focus();
   winnerEl.innerText = "";
   opponentProgressEl.innerHTML = "";
@@ -288,6 +289,7 @@ socket.on('gameFinished', (data) => {
   returnToMenuBtn.classList.remove('hidden');
   gameEnded = true;
   giveUpBtn.disabled = true;
+  typedTextEl.disabled = true;
 });
 
 // Postęp przeciwnika
