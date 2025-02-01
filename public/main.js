@@ -96,7 +96,7 @@ confirmJoinBtn.addEventListener('click', () => {
   socket.emit('joinGame', { gameCode: code, nickname: nick });
 });
 
-// Otrzymujemy info o utworzeniu gry
+// gameCreated
 socket.on('gameCreated', (gameCode) => {
   currentGameCode = gameCode;
   showPage('pageLobby');
@@ -104,17 +104,19 @@ socket.on('gameCreated', (gameCode) => {
 
   if (isHost) {
     regenerateCodeBtn.classList.remove('hidden');
+    document.getElementById('hostModifications').classList.remove('hidden');
   }
   updateReadyDisplay(false, false);
 });
 
-// Gracz dołącza
+// joinedGame
 socket.on('joinedGame', (gameCode) => {
   currentGameCode = gameCode;
   showPage('pageLobby');
   gameCodeDisplay.innerText = `Dołączyłeś do gry o kodzie: ${gameCode}`;
 
   regenerateCodeBtn.classList.add('hidden');
+  document.getElementById('hostModifications').classList.add('hidden');
   updateReadyDisplay(false, false);
 });
 
@@ -203,23 +205,45 @@ socket.on('gameStarted', (text) => {
 
 // Funkcja do przesuwania tekstu
 function updateDisplayedText() {
+  const containerWidth = textToTypeEl.parentElement.offsetWidth;
+  const middlePosition = containerWidth / 2;
+  
   const typedPart = originalText.substring(0, typedLength);
-  const remainingPart = originalText.substring(typedLength);
+  const currentChar = originalText[typedLength] || '';
+  const remainingPart = originalText.substring(typedLength + 1);
 
-  const content = `<span style="color: green; font-weight: bold;">${typedPart}</span>${remainingPart}`;
-  textToTypeEl.innerHTML = content;
+  // Nowa struktura z zachowaniem Twoich kolorów
+  textToTypeEl.innerHTML = `
+    <span style="color: green">${typedPart}</span><span class="current-char">${currentChar}</span><span>${remainingPart}</span>
+  `;
 
-  // Proste przesuwanie w lewo
-  const charWidth = 9;
-  let offset = typedLength * charWidth - 200;
-  if (offset < 0) offset = 0;
-  textToTypeEl.style.transform = `translateX(-${offset}px)`;
+  // Znajdź elementy po renderowaniu
+  const currentCharEl = textToTypeEl.querySelector('.current-char');
+  const allTextEl = textToTypeEl.firstElementChild.parentElement;
+
+  if (currentCharEl) {
+    // Oblicz przesunięcie
+    const charLeft = currentCharEl.offsetLeft;
+    const charWidth = currentCharEl.offsetWidth;
+    const targetPosition = middlePosition - (charLeft + charWidth/2);
+    
+    // Zastosuj przesunięcie
+    textToTypeEl.style.transform = `translateX(${targetPosition}px)`;
+  }
+
+  // Fallback dla pustego tekstu
+  if (typedLength === 0) {
+    textToTypeEl.style.transform = `translateX(0)`;
+  }
 }
 
 // Podczas pisania
 typedTextEl.addEventListener('input', () => {
   const value = typedTextEl.value;
   socket.emit('typedText', { gameCode: currentGameCode, typedText: value });
+  
+  // Wymuś ponowne obliczenie układu
+  setTimeout(() => updateDisplayedText(), 0);
 });
 
 // Błąd w pisaniu – podświetlanie pola i tekstu na czerwono

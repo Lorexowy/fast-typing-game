@@ -139,18 +139,64 @@ input[type="text"]:focus {
   width: 100%;
   height: 60px;
   overflow: hidden;
-  margin: 20px auto;  /* odstęp wokół */
+  margin: 20px auto;
   border: 1px solid #ccc;
   border-radius: 5px;
-  position: relative;
+  position: relative; /* To już masz */
 }
 
-/* Tekst do przepisywania */
+
 .big-text {
   font-size: 1.2rem;
   line-height: 1.6;
   white-space: nowrap;
   transition: transform 0.3s ease;
+  position: relative; /* Dodajemy */
+  left: 0; /* Resetujemy */
+}
+
+/* Nowe style DODAJ na końcu pliku */
+.current-char {
+  position: relative;
+  font-weight: bold;
+}
+
+.current-char::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+  background: #4CAF50;
+  animation: cursorBlink 1s infinite;
+}
+
+/* Tryb ciemny - DOPASUJ KOLORY */
+.dark-mode .text-container {
+  border-color: #555;
+}
+
+.dark-mode .big-text {
+  color: #fff; /* Kolor tekstu w trybie ciemnym */
+}
+
+.dark-mode .current-char::after {
+  background: #2ecc71; /* Zielony kursor w trybie ciemnym */
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 0 }
+  50% { opacity: 1 }
+}
+
+.typed-part {
+  color: #95a5a6; /* Kolor wpisanego tekstu */
+}
+
+.remaining-part {
+  color: #bdc3c7; /* Kolor przyszłego tekstu */
+  opacity: 0.8;
 }
 
 /* Pole do wpisywania */
@@ -390,4 +436,38 @@ input[type="text"]:focus {
 /* Kolor napisu czasu w trybie ciemnym */
 .dark-mode #finalTime {
   color: #ddd; /* Jasnoszary kolor w trybie ciemnym */
+}
+
+/* style.css */
+.host-modifications {
+  position: absolute;
+  right: -220px; /* Odstęp od prawej krawędzi kontenera */
+  top: 50px;
+  width: 200px;
+  background: #f8f8f8;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.host-modifications h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.mod-placeholder {
+  font-style: italic;
+  color: #7f8c8d;
+  text-align: center;
+}
+
+/* Tryb ciemny */
+.dark-mode .host-modifications {
+  background: #333;
+  border: 1px solid #444;
+}
+
+.dark-mode .host-modifications h3 {
+  color: #ecf0f1;
 }
