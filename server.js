@@ -14,29 +14,7 @@ app.use(express.static('public'));
 const games = {};
 
 // Przykładowe teksty do pisania
-const textsArray = [
-  "Litwo, Ojczyzno moja! ty jesteś jak zdrowie; Ile cię trzeba cenić, ten tylko się dowie, Kto cię stracił. Dziś piękność twą w całej ozdobie Widzę i opisuję, bo tęsknię po tobie. Panno święta, co Jasnej bronisz Częstochowy; I w Ostrej świecisz Bramie! Ty, co gród zamkowy; Nowogródzki ochraniasz z jego wiernym ludem!",
-  "To jest też mój dobry znajomy yyy.. Dwóch polaków w teamie prawda? Vander Amazing. Nie no Amazing akurat nie jest polakiem. E jak to nie jest polakiem. To jest trolling pod publike on udaje on udaje. Nie no przecież. Spokojnie. No co ty opowiadasz naprawdę. Dobra, okej. Profesjonalny analyst desk.",
-  "Sascha Tomas miał jedną zasadę: nigdy nie przegrywać. Dotyczyło to każdej dziedziny jego życia - sportu, gier, pracy, a nawet... związków. Jego znajomi żartowali, że dla niego relacje romantyczne to bardziej wyścig (to tak jak ta gra) niż uczucie. Ale Sascha nie żartował. Trzy miesiące - tyle trwała każda jego relacja. Zawsze zaczynało się idealnie. Był czarujący, uważny, spontaniczny. Pierwsze randki były jak z filmu, pełne ekscytujących niespodzianek i intensywnych emocji. Jego dziewczyny myślały, że trafiły na kogoś wyjątkowego.",
-  "abc",
-  "abc",
-  "abc",
-  "abc",
-  "abc",
-  "abc",
-  "abc",
-  "abc",
-  "abc",
-  "abc",
-  "abc",
-  "abc",
-  "abc",
-  "abc",
-  "abc",
-  "abc",
-  "abc",
-  "abc"
-];
+const textsArray = require('./texts');
 
 // Pomocnicza funkcja do generowania kodu (4 znaki)
 function generateGameCode() {
@@ -139,30 +117,47 @@ io.on('connection', (socket) => {
   });
 
   // Host kliknął "Rozpocznij grę" => 5s countdown
-  socket.on('startGame', (gameCode) => {
+  socket.on('startGame', (data) => {
+    // Odbieramy dane jako obiekt: { gameCode, difficulty }
+    const gameCode = data.gameCode;
     const game = games[gameCode];
     if (!game) return;
-
-    if (socket.id === game.host && game.hostReady && game.playerReady && !game.gameStarted && !game.countdownInProgress) {
+  
+    // Używamy aktualnego poziomu trudności zapisanej w grze,
+    // a jeśli nie jest ustawiona, używamy przekazanej wartości
+    const difficulty = game.difficulty || data.difficulty;
+    
+    if (
+      socket.id === game.host &&
+      game.hostReady &&
+      game.playerReady &&
+      !game.gameStarted &&
+      !game.countdownInProgress
+    ) {
       game.countdownInProgress = true;
       let counter = 5;
-
+    
       const intervalId = setInterval(() => {
         io.in(gameCode).emit('countdown', counter);
         counter--;
-
+    
         if (counter < 0) {
           clearInterval(intervalId);
           game.gameStarted = true;
           game.countdownInProgress = false;
-
-          const idx = Math.floor(Math.random() * textsArray.length);
-          game.originalText = textsArray[idx];
-
+    
+          // Filtrujemy teksty według aktualnego poziomu trudności
+          let textsForDifficulty = textsArray.filter(t => t.difficulty === difficulty);
+          if (textsForDifficulty.length === 0) {
+            textsForDifficulty = textsArray;
+          }
+          const idx = Math.floor(Math.random() * textsForDifficulty.length);
+          game.originalText = textsForDifficulty[idx].text;
+    
           io.in(gameCode).emit('gameStarted', game.originalText);
         }
       }, 1000);
-
+    
     } else {
       socket.emit('errorMsg', 'Nie można wystartować – sprawdź gotowość albo gra już wystartowała.');
     }
@@ -232,6 +227,14 @@ io.on('connection', (socket) => {
     
     // Emitujemy zdarzenie zakończenia gry do wszystkich graczy w pokoju
     io.in(gameCode).emit('gameFinished', { winnerSocketId, surrendered: true });
+  });
+
+  socket.on('updateDifficulty', (data) => {
+    const { gameCode, difficulty } = data;
+    const game = games[gameCode];
+    if (!game) return;
+    // Aktualizujemy poziom trudności w obiekcie gry
+    game.difficulty = difficulty;
   });
 
 });

@@ -43,6 +43,8 @@ const themeText = document.getElementById('themeText');
 
 const giveUpBtn = document.getElementById('giveUpBtn');
 
+const difficultySelect = document.getElementById('difficultySelect');
+
 // Nowe: element wyświetlający czas pisania
 const finalTimeEl = document.getElementById('finalTime');
 
@@ -65,6 +67,13 @@ function showPage(pageId) {
 
 // Powrót do menu
 returnToMenuBtn.addEventListener('click', () => {
+  // Resetujemy flagę, aby w nowej grze przycisk "Poddaj się" był aktywny
+  gameEnded = false;
+  giveUpBtn.disabled = false;
+  
+  // Opcjonalnie można też wyzerować currentGameCode, jeśli to jest potrzebne
+  currentGameCode = null;
+  
   showPage('pageIntro');
 });
 
@@ -169,7 +178,10 @@ socket.on('updateReadyStatus', ({ hostReady, playerReady }) => {
 // Host startuje => serwer odlicza
 startGameBtn.addEventListener('click', () => {
   if (!currentGameCode) return;
-  socket.emit('startGame', currentGameCode);
+  // Pobieramy wartość wybraną przez hosta
+  const difficulty = document.getElementById('difficultySelect').value;
+  // Wysyłamy obiekt zawierający kod gry oraz poziom trudności
+  socket.emit('startGame', { gameCode: currentGameCode, difficulty });
 });
 
 // Otrzymujemy countdown
@@ -371,4 +383,12 @@ giveUpBtn.addEventListener('click', () => {
     return;
   }
   socket.emit('giveUp', currentGameCode);
+});
+
+difficultySelect.addEventListener('change', () => {
+  if (currentGameCode) {
+    const newDifficulty = difficultySelect.value;
+    // Wysyłamy zdarzenie aktualizujące poziom trudności do serwera
+    socket.emit('updateDifficulty', { gameCode: currentGameCode, difficulty: newDifficulty });
+  }
 });
