@@ -46,6 +46,8 @@ const difficultySelect = document.getElementById('difficultySelect');
 
 const menuBtns = document.querySelectorAll('.menuBtn');
 
+const modeSelect = document.getElementById('modeSelect');
+
 // Nowe: element wyświetlający czas pisania
 const finalTimeEl = document.getElementById('finalTime');
 
@@ -55,6 +57,7 @@ let isHost = false;
 let originalText = "";
 let typedLength = 0;
 let gameEnded = false;
+let gameMode = modeSelect ? modeSelect.value : "hardcore"; // domyślnie hardcore
 
 // Ustawiamy domyślne wartości nickname'ów
 let hostNickname = "Host";
@@ -190,7 +193,8 @@ socket.on('updateReadyStatus', ({ hostReady, playerReady }) => {
 startGameBtn.addEventListener('click', () => {
   if (!currentGameCode) return;
   const difficulty = difficultySelect.value;
-  socket.emit('startGame', { gameCode: currentGameCode, difficulty });
+  // Wysyłamy również tryb gry, ustawiony przez hosta
+  socket.emit('startGame', { gameCode: currentGameCode, difficulty, mode: modeSelect.value });
 });
 
 // Otrzymujemy countdown
@@ -203,17 +207,22 @@ socket.on('countdown', (time) => {
 });
 
 // Gra się faktycznie rozpoczyna
-socket.on('gameStarted', (text) => {
+socket.on('gameStarted', (data) => {
+  if (typeof data === 'object' && data.text !== undefined && data.mode !== undefined) {
+    originalText = data.text;
+    gameMode = data.mode;
+  } else {
+    originalText = data;
+  }
   countdownContainer.classList.add('hidden');
   countdownNumber.textContent = "5";
   countdownBarProgress.style.width = "100%";
-  originalText = text;
   typedLength = 0;
   showPage('pageGame');
   textToTypeEl.innerHTML = "";
   updateDisplayedText();
   typedTextEl.value = "";
-  typedTextEl.disabled = false; // Upewnij się, że pole tekstowe jest aktywne
+  typedTextEl.disabled = false;
   typedTextEl.focus();
   winnerEl.innerText = "";
   opponentProgressEl.innerHTML = "";
@@ -253,15 +262,27 @@ typedTextEl.addEventListener('input', () => {
 
 // Błąd w pisaniu – podświetlanie pola i tekstu na czerwono
 socket.on('typingError', () => {
-  typedTextEl.value = "";
-  typedTextEl.classList.add('flash-error');
-  textToTypeEl.classList.add('flash-error-text');
-  setTimeout(() => {
-    typedTextEl.classList.remove('flash-error');
-    textToTypeEl.classList.remove('flash-error-text');
-  }, 500);
-  document.body.classList.add("shake");
-  setTimeout(() => document.body.classList.remove("shake"), 300);
+  if (gameMode === "hardcore") {
+    // Hardcore: resetujemy pole i cofamy postęp (tak jak dotychczas)
+    typedTextEl.value = "";
+    typedTextEl.classList.add('flash-error');
+    textToTypeEl.classList.add('flash-error-text');
+    setTimeout(() => {
+      typedTextEl.classList.remove('flash-error');
+      textToTypeEl.classList.remove('flash-error-text');
+    }, 500);
+    document.body.classList.add("shake");
+    setTimeout(() => document.body.classList.remove("shake"), 300);
+  } else if (gameMode === "normal") {
+    // Normal: usuwamy ostatni wpisany znak i umożliwiamy kontynuację
+    // Możesz np. usunąć ostatni znak z pola tekstowego:
+    typedTextEl.value = typedTextEl.value.slice(0, -1);
+    // Opcjonalnie dodaj krótką animację błędu, ale nie czyść całego pola
+    typedTextEl.classList.add('flash-error');
+    setTimeout(() => {
+      typedTextEl.classList.remove('flash-error');
+    }, 300);
+  }
 });
 
 // Nasz postęp
@@ -411,3 +432,11 @@ menuBtns.forEach(btn => {
     showPage('pageIntro');
   });
 });
+
+if (modeSelect) {
+  modeSelect.addEventListener('change', () => {
+    gameMode = modeSelect.value;
+    // Możesz opcjonalnie wyświetlić komunikat lub zapisać wartość do localStorage
+    console.log("Tryb gry zmieniony na:", gameMode);
+  });
+}

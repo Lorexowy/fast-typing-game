@@ -90,6 +90,7 @@
       <div id="hostModifications" class="host-modifications hidden">
         <h3 class="text-center" data-i18n="modifications">Modyfikacje</h3>
         <div class="modifications-content">
+          
           <!-- wybór poziomu trudności -->
           <div class="custom-select-wrapper">
             <label for="difficultySelect" data-i18n="difficultyLevel">Poziom trudności:</label>
@@ -101,6 +102,18 @@
               </select>
             </div>
           </div>
+
+          <!-- wybór trybu gry -->
+          <div class="custom-select-wrapper">
+            <label for="modeSelect" data-i18n="gameModeLabel">Tryb gry:</label>
+            <div class="custom-select">
+              <select id="modeSelect">
+                <option value="hardcore" data-i18n="hardcoreMode">Hardcore</option>
+                <option value="normal" data-i18n="normalMode">Normal</option>
+              </select>
+            </div>
+          </div>
+
           <!-- Tutaj później dodasz elementy konfiguracyjne -->
           <p class="mod-placeholder" data-i18n="modPlaceholder">Opcje będą dostępne wkrótce!</p>
         </div>

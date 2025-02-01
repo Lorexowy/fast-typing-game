@@ -36,7 +36,10 @@ const translations = {
       switchToDark: "Tryb jasny",
       gameCodeLabel: "Kod Twojej gry:",
       ready: "Gotowy",
-      notReady: "Niegotowy"
+      notReady: "Niegotowy",
+      gameModeLabel: "Tryb gry:",
+      hardcoreMode: "Hardcore",
+      normalMode: "Normal"
     },
     en: {
       pageTitle: "Fast Typing Game",
@@ -74,7 +77,10 @@ const translations = {
       switchToDark: "Light Mode",    // lub "Switch to Dark Mode"
       gameCodeLabel: "Your game code:",
       ready: "Ready",
-      notReady: "Not Ready"
+      notReady: "Not Ready",
+      gameModeLabel: "Game mode:",
+      hardcoreMode: "Hardcore",
+      normalMode: "Normal"
     }
   };
   

@@ -112,7 +112,12 @@ io.on('connection', (socket) => {
     const gameCode = data.gameCode;
     const game = games[gameCode];
     if (!game) return;
+    
+    // Pobieramy poziom trudności, a także tryb gry z danych odebranych od hosta
     const difficulty = game.difficulty || data.difficulty;
+    const mode = data.mode;  // Tryb gry ustawiony przez hosta
+    game.mode = mode;  // Zapisujemy tryb w obiekcie gry
+    
     if (
       socket.id === game.host &&
       game.hostReady &&
@@ -122,22 +127,28 @@ io.on('connection', (socket) => {
     ) {
       game.countdownInProgress = true;
       let counter = 5;
+      
       const intervalId = setInterval(() => {
         io.in(gameCode).emit('countdown', counter);
         counter--;
+        
         if (counter < 0) {
           clearInterval(intervalId);
           game.gameStarted = true;
           game.countdownInProgress = false;
+          
           let textsForDifficulty = textsArray.filter(t => t.difficulty === difficulty);
           if (textsForDifficulty.length === 0) {
             textsForDifficulty = textsArray;
           }
           const idx = Math.floor(Math.random() * textsForDifficulty.length);
           game.originalText = textsForDifficulty[idx].text;
-          io.in(gameCode).emit('gameStarted', game.originalText);
+          
+          // Emitujemy obiekt zawierający zarówno tekst, jak i tryb gry
+          io.in(gameCode).emit('gameStarted', { text: game.originalText, mode: game.mode });
         }
       }, 1000);
+      
     } else {
       socket.emit('errorMsg', 'Nie można wystartować – sprawdź gotowość albo gra już wystartowała.');
     }
