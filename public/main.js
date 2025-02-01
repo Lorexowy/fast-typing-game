@@ -41,6 +41,8 @@ const returnToMenuBtn = document.getElementById('returnToMenuBtn');
 const themeSwitch = document.getElementById('themeSwitch');
 const themeText = document.getElementById('themeText');
 
+const giveUpBtn = document.getElementById('giveUpBtn');
+
 // Nowe: element wyświetlający czas pisania
 const finalTimeEl = document.getElementById('finalTime');
 
@@ -49,6 +51,7 @@ let currentGameCode = null;
 let isHost = false;
 let originalText = "";
 let typedLength = 0;
+let gameEnded = false;
 
 // Zmienna do pomiaru czasu
 let startTime = null;
@@ -269,20 +272,46 @@ socket.on('yourProgress', ({ correctCount }) => {
 });
 
 // Koniec gry
-socket.on('gameFinished', (winnerSocketId) => {
-  // Liczymy czas
+socket.on('gameFinished', (data) => {
+  let winnerSocketId, surrendered = false;
+  
+  // Sprawdzamy, czy otrzymaliśmy obiekt
+  if (typeof data === 'object' && data !== null) {
+    winnerSocketId = data.winnerSocketId;
+    surrendered = data.surrendered;
+  } else {
+    winnerSocketId = data;
+  }
+  
+  // Liczymy czas gry
   const endTime = Date.now();
   const totalSeconds = ((endTime - startTime) / 1000).toFixed(2);
-
+  
+  // Ustalamy komunikaty w zależności od tego, czy gra zakończyła się przez poddanie
   if (winnerSocketId === socket.id) {
-    winnerEl.innerText = "Gratulacje! Wygrałeś!";
+    // Ja jestem zwycięzcą
+    if (surrendered) {
+      winnerEl.innerText = "Gratulacje! Wygrałeś, przeciwnik się poddał!";
+    } else {
+      winnerEl.innerText = "Gratulacje! Wygrałeś!";
+    }
     finalTimeEl.innerText = `Twój czas: ${totalSeconds} s`;
   } else {
-    winnerEl.innerText = "Niestety, przegrywasz wyścig.";
+    // Ja przegrywam
+    if (surrendered) {
+      winnerEl.innerText = "Niestety, przegrywasz poprzez poddanie.";
+    } else {
+      winnerEl.innerText = "Niestety, przegrywasz wyścig.";
+    }
     finalTimeEl.innerText = `Twój czas: ${totalSeconds} s`;
   }
-  // Przycisk do menu
+  
+  // Wyświetlamy przycisk do powrotu do menu
   returnToMenuBtn.classList.remove('hidden');
+
+  // Ustawiamy flagę, że gra się zakończyła oraz dezaktywujemy przycisk "Poddaj się"
+  gameEnded = true;
+  giveUpBtn.disabled = true;
 });
 
 // Postęp przeciwnika
@@ -334,4 +363,12 @@ typedTextEl.addEventListener("copy", (e) => {
 // Zablokowanie wklejania (CTRL + V, klik prawym)
 typedTextEl.addEventListener("paste", (e) => {
   e.preventDefault();
+});
+
+// Obsługa kliknięcia przycisku "Poddaj się"
+giveUpBtn.addEventListener('click', () => {
+  if (!currentGameCode || gameEnded) {
+    return;
+  }
+  socket.emit('giveUp', currentGameCode);
 });

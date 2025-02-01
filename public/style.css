@@ -471,3 +471,39 @@ input[type="text"]:focus {
 .dark-mode .host-modifications h3 {
   color: #ecf0f1;
 }
+
+.options-container {
+  width: 100%;
+  max-width: 250px;
+  background: #fff;
+  padding: 20px 20px 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  position: absolute;
+  right: 15px;
+  top: 15px;
+
+  /* Ważne: wyśrodkowane elementy wewnątrz */
+  text-align: center;
+}
+
+.dark-mode .options-container {
+  background: #333;
+  color: white;
+}
+
+/* Nadpisujemy pozycjonowanie przełącznika w obrębie opcji */
+.options-container .theme-toggle {
+  position: static;  /* usunięcie absolutnego pozycjonowania */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 15px 0;
+}
+
+.opt-placeholder {
+  font-style: italic;
+  color: #7f8c8d;
+  text-align: center;
+}

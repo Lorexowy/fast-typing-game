@@ -17,7 +17,25 @@ const games = {};
 const textsArray = [
   "Litwo, Ojczyzno moja! ty jesteś jak zdrowie; Ile cię trzeba cenić, ten tylko się dowie, Kto cię stracił. Dziś piękność twą w całej ozdobie Widzę i opisuję, bo tęsknię po tobie. Panno święta, co Jasnej bronisz Częstochowy; I w Ostrej świecisz Bramie! Ty, co gród zamkowy; Nowogródzki ochraniasz z jego wiernym ludem!",
   "To jest też mój dobry znajomy yyy.. Dwóch polaków w teamie prawda? Vander Amazing. Nie no Amazing akurat nie jest polakiem. E jak to nie jest polakiem. To jest trolling pod publike on udaje on udaje. Nie no przecież. Spokojnie. No co ty opowiadasz naprawdę. Dobra, okej. Profesjonalny analyst desk.",
-  "Sascha Tomas miał jedną zasadę: nigdy nie przegrywać. Dotyczyło to każdej dziedziny jego życia - sportu, gier, pracy, a nawet... związków. Jego znajomi żartowali, że dla niego relacje romantyczne to bardziej wyścig (to tak jak ta gra) niż uczucie. Ale Sascha nie żartował. Trzy miesiące - tyle trwała każda jego relacja. Zawsze zaczynało się idealnie. Był czarujący, uważny, spontaniczny. Pierwsze randki były jak z filmu, pełne ekscytujących niespodzianek i intensywnych emocji. Jego dziewczyny myślały, że trafiły na kogoś wyjątkowego."
+  "Sascha Tomas miał jedną zasadę: nigdy nie przegrywać. Dotyczyło to każdej dziedziny jego życia - sportu, gier, pracy, a nawet... związków. Jego znajomi żartowali, że dla niego relacje romantyczne to bardziej wyścig (to tak jak ta gra) niż uczucie. Ale Sascha nie żartował. Trzy miesiące - tyle trwała każda jego relacja. Zawsze zaczynało się idealnie. Był czarujący, uważny, spontaniczny. Pierwsze randki były jak z filmu, pełne ekscytujących niespodzianek i intensywnych emocji. Jego dziewczyny myślały, że trafiły na kogoś wyjątkowego.",
+  "abc",
+  "abc",
+  "abc",
+  "abc",
+  "abc",
+  "abc",
+  "abc",
+  "abc",
+  "abc",
+  "abc",
+  "abc",
+  "abc",
+  "abc",
+  "abc",
+  "abc",
+  "abc",
+  "abc",
+  "abc"
 ];
 
 // Pomocnicza funkcja do generowania kodu (4 znaki)
@@ -189,6 +207,33 @@ io.on('connection', (socket) => {
       }
     }
   });
+
+  // Obsługa zdarzenia "giveUp"
+  socket.on('giveUp', (gameCode) => {
+    const game = games[gameCode];
+    if (!game) return;
+    
+    let winnerSocketId = null;
+    
+    // Jeśli host się poddaje, wygrywa gracz (jeśli już dołączył)
+    if (socket.id === game.host) {
+      winnerSocketId = game.player;
+    } 
+    // Jeśli gracz poddaje się, wygrywa host
+    else if (socket.id === game.player) {
+      winnerSocketId = game.host;
+    }
+    
+    // Jeśli z jakiegoś powodu nie ma przeciwnika (np. gracz jeszcze nie dołączył), można zignorować lub wysłać komunikat
+    if (!winnerSocketId) {
+      socket.emit('errorMsg', 'Nie ma przeciwnika lub gra jeszcze nie rozpoczęła się.');
+      return;
+    }
+    
+    // Emitujemy zdarzenie zakończenia gry do wszystkich graczy w pokoju
+    io.in(gameCode).emit('gameFinished', { winnerSocketId, surrendered: true });
+  });
+
 });
 
 server.listen(3000, () => {

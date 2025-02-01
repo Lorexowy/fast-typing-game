@@ -7,12 +7,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="theme-toggle">
-    <span id="themeText">Tryb ciemny</span>
-    <span class="theme-icon">☀️</span>
-    <input type="checkbox" id="themeSwitch">
-    <label for="themeSwitch" class="toggle-label"></label>
-    <span class="theme-icon">🌙</span>
+
+  <!-- contener opcji-->
+  <div class="options-container">
+    <h3>Opcje gry</h3>
+
+    <!-- przełącznik motywu strony na ciemny i jasny-->
+    <div class="theme-toggle">
+      <span id="themeText">Tryb ciemny</span>
+      <span class="theme-icon">☀️</span>
+      <input type="checkbox" id="themeSwitch">
+      <label for="themeSwitch" class="toggle-label"></label>
+      <span class="theme-icon">🌙</span>
+    </div>
+
+    <p class="opt-placeholder">Tutaj będą pojawiały się opcje gry...</p>
   </div>
 
   <div class="container">
@@ -71,6 +80,7 @@
         <button id="startGameBtn" class="btn hidden">Rozpocznij grę</button>
       </div>
 
+      <!-- Pole modyfikacje dla hosta dla modyfikacji gry -->
       <div id="hostModifications" class="host-modifications hidden">
         <h3 class="text-center">Modyfikacje</h3>
         <div class="modifications-content">
@@ -111,7 +121,14 @@
 
       <h4 class="text-center">Postęp przeciwnika:</h4>
       <div id="opponentProgress" class="progress-container text-center"></div>
+
+      <!-- Dodajemy przycisk "Poddaj się" -->
+      <div class="text-center" style="margin-top: 10px;">
+        <button id="giveUpBtn" class="btn">Poddaj się</button>
+      </div>
+
     </div>
+
 
     <div id="info" class="text-center error-msg"></div>
   </div>
