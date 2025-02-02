@@ -31,7 +31,7 @@ const translations = {
       gameInstruction: "Przepisz tekst najszybciej, jak potrafisz!",
       typeHere: "Tutaj pisz...",
       footerCredit: "Coded by Mateusz Michel",
-      langToggleBtn: "Switch to English",
+      langToggleBtn: "Switch to EN",
       switchToLight: "Tryb ciemny", // gdy włączony tryb ciemny – kliknięciem przełączysz na jasny
       switchToDark: "Tryb jasny",
       gameCodeLabel: "Kod Twojej gry:",
@@ -72,7 +72,7 @@ const translations = {
       gameInstruction: "Type the text as fast as you can!",
       typeHere: "Type here...",
       footerCredit: "Coded by Mateusz Michel",
-      langToggleBtn: "Change to Polish",
+      langToggleBtn: "Zmień na PL",
       switchToLight: "Dark Mode", // lub "Switch to Light Mode"
       switchToDark: "Light Mode",    // lub "Switch to Dark Mode"
       gameCodeLabel: "Your game code:",
