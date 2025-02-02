@@ -313,11 +313,11 @@ socket.on('gameFinished', (data) => {
   if (winnerSocketId === socket.id) {
     popupTitle.innerText = "Gratulacje!";
     popupMessage.innerText = surrendered ? "Przeciwnik się poddał!" : "Wygrałeś wyścig!";
-    popupTime.innerText = `Twój czas: ${totalSeconds} s`;
+    popupTime.innerText = `Czas gry: ${totalSeconds} s`;
   } else {
     popupTitle.innerText = "Przegrana!";
     popupMessage.innerText = surrendered ? "Poddałeś się..." : "Twój przeciwnik był szybszy!";
-    popupTime.innerText = `Twój czas: ${totalSeconds} s`;
+    popupTime.innerText = `Czas gry: ${totalSeconds} s`;
   }
 
   popup.classList.add("show");
