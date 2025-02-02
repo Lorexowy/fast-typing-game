@@ -302,18 +302,38 @@ socket.on('gameFinished', (data) => {
   }
   const endTime = Date.now();
   const totalSeconds = ((endTime - startTime) / 1000).toFixed(2);
+
+  const popup = document.getElementById('resultPopup');
+  const popupOverlay = document.getElementById('popupOverlay');
+  const popupTitle = document.getElementById('popupTitle');
+  const popupMessage = document.getElementById('popupMessage');
+  const popupTime = document.getElementById('popupTime');
+  const popupCloseBtn = document.getElementById('popupCloseBtn');
+
   if (winnerSocketId === socket.id) {
-    winnerEl.innerText = surrendered ? "Gratulacje! Wygrałeś, przeciwnik się poddał!" : "Gratulacje! Wygrałeś!";
-    finalTimeEl.innerText = `Twój czas: ${totalSeconds} s`;
+    popupTitle.innerText = "Gratulacje!";
+    popupMessage.innerText = surrendered ? "Przeciwnik się poddał!" : "Wygrałeś wyścig!";
+    popupTime.innerText = `Twój czas: ${totalSeconds} s`;
   } else {
-    winnerEl.innerText = surrendered ? "Niestety, przegrywasz poprzez poddanie." : "Niestety, przegrywasz wyścig.";
-    finalTimeEl.innerText = `Twój czas: ${totalSeconds} s`;
+    popupTitle.innerText = "Przegrana!";
+    popupMessage.innerText = surrendered ? "Poddałeś się..." : "Twój przeciwnik był szybszy!";
+    popupTime.innerText = `Twój czas: ${totalSeconds} s`;
   }
-  returnToMenuBtn.classList.remove('hidden');
+
+  popup.classList.add("show");
+  popupOverlay.classList.add("show"); // Aktywujemy ciemne tło
+
+  popupCloseBtn.addEventListener('click', () => {
+    popup.classList.remove("show");
+    popupOverlay.classList.remove("show"); // Ukrywamy ciemne tło
+    showPage('pageIntro');
+  });
+
   gameEnded = true;
   giveUpBtn.disabled = true;
   typedTextEl.disabled = true;
 });
+
 
 // Postęp przeciwnika
 socket.on('opponentProgress', ({ typedLength: oppLen }) => {
