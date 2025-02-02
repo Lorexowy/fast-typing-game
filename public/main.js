@@ -293,6 +293,8 @@ socket.on('yourProgress', ({ correctCount }) => {
 
 // Koniec gry
 socket.on('gameFinished', (data) => {
+  console.log("Gra zakończona, resetujemy stan.");
+
   let winnerSocketId, surrendered = false;
   if (typeof data === 'object' && data !== null) {
     winnerSocketId = data.winnerSocketId;
@@ -300,6 +302,7 @@ socket.on('gameFinished', (data) => {
   } else {
     winnerSocketId = data;
   }
+
   const endTime = Date.now();
   const totalSeconds = ((endTime - startTime) / 1000).toFixed(2);
 
@@ -321,18 +324,31 @@ socket.on('gameFinished', (data) => {
   }
 
   popup.classList.add("show");
-  popupOverlay.classList.add("show"); // Aktywujemy ciemne tło
+  popupOverlay.classList.add("show");
 
-  popupCloseBtn.addEventListener('click', () => {
+  // Resetujemy stan gry, aby można było zacząć nową grę
+  gameEnded = false;
+  giveUpBtn.disabled = false;
+  typedTextEl.disabled = false;
+  currentGameCode = null; // Resetujemy kod gry
+  typedTextEl.value = "";
+  typedLength = 0;
+  startTime = null;
+
+  // Przywracamy poprawną obsługę przycisku powrotu do menu
+  popupCloseBtn.removeEventListener('click', closePopup); // Usuwamy poprzedni event
+  popupCloseBtn.addEventListener('click', closePopup);
+
+  function closePopup() {
     popup.classList.remove("show");
-    popupOverlay.classList.remove("show"); // Ukrywamy ciemne tło
+    popupOverlay.classList.remove("show");
     showPage('pageIntro');
-  });
+  }
 
-  gameEnded = true;
-  giveUpBtn.disabled = true;
-  typedTextEl.disabled = true;
+  console.log("Zresetowano zmienne gry i poprawiono obsługę powrotu do menu.");
 });
+
+
 
 
 // Postęp przeciwnika
@@ -388,8 +404,10 @@ typedTextEl.addEventListener("paste", (e) => {
 
 // Obsługa kliknięcia przycisku "Poddaj się"
 giveUpBtn.addEventListener('click', () => {
+  console.log(`Kliknięto "Poddaj się". Aktualny kod gry: ${currentGameCode}`);
   if (!currentGameCode || gameEnded) {
-    return;
+      console.log("Błąd: Brak kodu gry lub gra już zakończona.");
+      return;
   }
   socket.emit('giveUp', currentGameCode);
 });

@@ -193,26 +193,33 @@ io.on('connection', (socket) => {
 
   // Obsługa zdarzenia "giveUp"
   socket.on('giveUp', (gameCode) => {
+    console.log(`Przycisk 'Poddaj się' wciśnięty przez ${socket.id} w grze ${gameCode}`);
+
     const game = games[gameCode];
-    if (!game) return;
+    if (!game) {
+        console.log("Błąd: Gra nie istnieje.");
+        socket.emit('errorMsg', 'Błąd: Gra nie istnieje.');
+        return;
+    }
+
     let winnerSocketId = null;
     if (socket.id === game.host) {
-      winnerSocketId = game.player;
+        winnerSocketId = game.player;
     } else if (socket.id === game.player) {
-      winnerSocketId = game.host;
+        winnerSocketId = game.host;
     }
-    if (!winnerSocketId) {
-      socket.emit('errorMsg', 'Nie ma przeciwnika lub gra jeszcze nie rozpoczęła się.');
-      return;
-    }
-    io.in(gameCode).emit('gameFinished', { winnerSocketId, surrendered: true });
-  });
 
-  socket.on('updateDifficulty', (data) => {
-    const { gameCode, difficulty } = data;
-    const game = games[gameCode];
-    if (!game) return;
-    game.difficulty = difficulty;
+    if (!winnerSocketId) {
+        console.log("Błąd: Nie ma przeciwnika.");
+        socket.emit('errorMsg', 'Nie ma przeciwnika lub gra jeszcze nie rozpoczęła się.');
+        return;
+    }
+
+    console.log(`Gra zakończona. Zwycięzca: ${winnerSocketId}`);
+    io.in(gameCode).emit('gameFinished', { winnerSocketId, surrendered: true });
+
+    // Usuwamy grę, aby nowa mogła działać poprawnie
+    delete games[gameCode];
   });
 });
 
