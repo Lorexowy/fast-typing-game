@@ -222,27 +222,30 @@ io.on('connection', (socket) => {
     delete games[gameCode];
   });
 
-  socket.on('sendWPM', ({ gameCode, wpm }) => {
+  socket.on('sendStats', ({ gameCode, wpm, accuracy }) => {
     const game = games[gameCode];
     if (!game) return;
 
-    // Przechowujemy unikalne WPM dla hosta i gracza
     if (socket.id === game.host) {
         game.hostWPM = wpm;
+        game.hostAccuracy = accuracy;
     } else if (socket.id === game.player) {
         game.playerWPM = wpm;
+        game.playerAccuracy = accuracy;
     }
 
-    // Gdy mamy oba wyniki, wysyłamy je do obu graczy
     if (game.hostWPM !== undefined && game.playerWPM !== undefined) {
-        io.to(gameCode).emit('displayWPM', {
+        io.to(gameCode).emit('displayStats', {
             hostNickname: game.hostNickname,
             playerNickname: game.playerNickname,
             hostWPM: game.hostWPM,
-            playerWPM: game.playerWPM
+            playerWPM: game.playerWPM,
+            hostAccuracy: game.hostAccuracy,
+            playerAccuracy: game.playerAccuracy
         });
     }
   });
+
 
 
 

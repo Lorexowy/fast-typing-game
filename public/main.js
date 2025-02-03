@@ -58,6 +58,8 @@ let originalText = "";
 let typedLength = 0;
 let gameEnded = false;
 let gameMode = modeSelect ? modeSelect.value : "hardcore"; // domyślnie hardcore
+let totalKeystrokes = 0;
+let incorrectKeystrokes = 0;
 
 // Ustawiamy domyślne wartości nickname'ów
 let hostNickname = "Host";
@@ -255,6 +257,7 @@ function updateDisplayedText() {
 
 // Podczas pisania
 typedTextEl.addEventListener('input', () => {
+  totalKeystrokes++; // Każde naciśnięcie klawisza zwiększa licznik
   const value = typedTextEl.value;
   socket.emit('typedText', { gameCode: currentGameCode, typedText: value });
   setTimeout(() => updateDisplayedText(), 0);
@@ -262,6 +265,8 @@ typedTextEl.addEventListener('input', () => {
 
 // Błąd w pisaniu – podświetlanie pola i tekstu na czerwono
 socket.on('typingError', () => {
+  incorrectKeystrokes++; // Każdy błąd zwiększa licznik błędów
+
   if (gameMode === "hardcore") {
     // Hardcore: resetujemy pole i cofamy postęp (tak jak dotychczas)
     typedTextEl.value = "";
@@ -275,15 +280,14 @@ socket.on('typingError', () => {
     setTimeout(() => document.body.classList.remove("shake"), 300);
   } else if (gameMode === "normal") {
     // Normal: usuwamy ostatni wpisany znak i umożliwiamy kontynuację
-    // Możesz np. usunąć ostatni znak z pola tekstowego:
     typedTextEl.value = typedTextEl.value.slice(0, -1);
-    // Opcjonalnie dodaj krótką animację błędu, ale nie czyść całego pola
     typedTextEl.classList.add('flash-error');
     setTimeout(() => {
       typedTextEl.classList.remove('flash-error');
     }, 300);
   }
 });
+
 
 // Nasz postęp
 socket.on('yourProgress', ({ correctCount }) => {
@@ -305,7 +309,8 @@ socket.on('gameFinished', (data) => {
 
   const endTime = Date.now();
   const totalSeconds = ((endTime - startTime) / 1000).toFixed(2);
-
+  
+  //obliczanie WPM
   function calculateWPM(typedText, timeInSeconds) {
     const wordsTyped = typedText.length / 5; // Średnio 5 znaków na słowo
     const timeInMinutes = timeInSeconds / 60;
@@ -316,6 +321,15 @@ socket.on('gameFinished', (data) => {
 
   const wpm = calculateWPM(typedTextEl.value, totalSeconds);
   socket.emit('sendWPM', { gameCode: currentGameCode, wpm });
+
+  //obliczanie dokładności
+  function calculateAccuracy() {
+    if (totalKeystrokes === 0) return 0; // Zapobiega dzieleniu przez zero
+    return Math.round(((totalKeystrokes - incorrectKeystrokes) / totalKeystrokes) * 100);
+  }
+
+  const accuracy = calculateAccuracy();
+  socket.emit('sendStats', { gameCode: currentGameCode, wpm, accuracy });
 
   const popup = document.getElementById('resultPopup');
   const popupOverlay = document.getElementById('popupOverlay');
@@ -490,12 +504,11 @@ if (modeSelect) {
   });
 }
 
-socket.on('displayWPM', ({ hostNickname, playerNickname, hostWPM, playerWPM }) => {
+socket.on('displayStats', ({ hostNickname, playerNickname, hostWPM, playerWPM, hostAccuracy, playerAccuracy }) => {
   const popupWPM = document.getElementById('popupWPM');
 
-  // Wyświetlamy WPM dla obu graczy
   popupWPM.innerHTML = `
-      <p>Wynik WPM gracza ${hostNickname}: <strong>${hostWPM}</strong></p>
-      <p>Wynik WPM gracza ${playerNickname}: <strong>${playerWPM}</strong></p>
+      <p>Gracz ${hostNickname}: WPM: <strong>${hostWPM}</strong> | Accuracy: <strong>${hostAccuracy}%</strong></p>
+      <p>Gracz ${playerNickname}: WPM: <strong>${playerWPM}</strong> | Accuracy: <strong>${playerAccuracy}%</strong></p>
   `;
 });
