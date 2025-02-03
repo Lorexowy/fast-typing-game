@@ -306,6 +306,17 @@ socket.on('gameFinished', (data) => {
   const endTime = Date.now();
   const totalSeconds = ((endTime - startTime) / 1000).toFixed(2);
 
+  function calculateWPM(typedText, timeInSeconds) {
+    const wordsTyped = typedText.length / 5; // Średnio 5 znaków na słowo
+    const timeInMinutes = timeInSeconds / 60;
+    
+    if (timeInMinutes === 0) return 0; // Zapobiega dzieleniu przez zero
+    return Math.round(wordsTyped / timeInMinutes);
+  }
+
+  const wpm = calculateWPM(typedTextEl.value, totalSeconds);
+  socket.emit('sendWPM', { gameCode: currentGameCode, wpm });
+
   const popup = document.getElementById('resultPopup');
   const popupOverlay = document.getElementById('popupOverlay');
   const popupTitle = document.getElementById('popupTitle');
@@ -478,3 +489,13 @@ if (modeSelect) {
     console.log("Tryb gry zmieniony na:", gameMode);
   });
 }
+
+socket.on('displayWPM', ({ hostNickname, playerNickname, hostWPM, playerWPM }) => {
+  const popupWPM = document.getElementById('popupWPM');
+
+  // Wyświetlamy WPM dla obu graczy
+  popupWPM.innerHTML = `
+      <p>Wynik WPM gracza ${hostNickname}: <strong>${hostWPM}</strong></p>
+      <p>Wynik WPM gracza ${playerNickname}: <strong>${playerWPM}</strong></p>
+  `;
+});
