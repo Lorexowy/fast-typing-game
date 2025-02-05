@@ -32,10 +32,24 @@
     <!-- Strona powitalna -->
     <div id="pageIntro" class="page">
       <h1 class="title text-center" data-i18n="gameTitle">Gra w szybkie pisanie</h1>
-      <p class="text-center" data-i18n="introOptions">Wybierz jedną z opcji:</p>
+      <p class="text-center" data-i18n="introOptions1">Graj samemu:</p>
       <div class="btn-group text-center">
+        <button id="singleplayerBtn" class="btn" data-i18n="singleplayer">Singleplayer</button>
+      </div>
+      <p class="text-center" data-i18n="introOptions2">Graj ze znajomymi:</p>
+      <div>
         <button id="createGameBtn" class="btn" data-i18n="createGame">Stwórz grę</button>
         <button id="goToJoinBtn" class="btn" data-i18n="joinGame">Dołącz do gry</button>
+      </div>
+    </div>
+
+    <!-- Ekran wpisywania nicku dla singleplayera -->
+    <div id="pageSingleplayerNickname" class="page hidden">
+      <h2 class="text-center" data-i18n="enterNickname">Podaj swój nick</h2>
+      <div class="text-center">
+          <input type="text" id="singleplayerNicknameInput" placeholder="Twój nick" data-i18n-placeholder="nicknamePlaceholder" />
+          <button id="confirmSingleplayerBtn" class="btn" data-i18n="next">Dalej</button>
+          <button class="btn menuBtn" data-i18n="returnToMenu">Powrót do menu</button>
       </div>
     </div>
 
@@ -63,6 +77,37 @@
       </div>
       <div class="text-center" style="margin-top: 8px;">
         <button class="btn menuBtn" data-i18n="returnToMenu">Powrót do menu</button>
+      </div>
+    </div>
+
+    <!-- Lobby singleplayer -->
+    <div id="pageSingleplayerLobby" class="page hidden">
+      <h2 class="text-center">Lobby Singleplayer</h2>
+      <p class="text-center">Gracz: <span id="singleplayerNicknameDisplay"></span></p>
+
+      <div class="text-center">
+          <label for="singleplayerDifficulty">Poziom trudności:</label>
+          <select id="singleplayerDifficulty">
+              <option value="easy">Łatwy</option>
+              <option value="medium">Średni</option>
+              <option value="hard">Trudny</option>
+          </select>
+      </div>
+
+      <div class="text-center">
+          <label for="singleplayerMode">Tryb gry:</label>
+          <select id="singleplayerMode">
+              <option value="normal">Normal</option>
+              <option value="hardcore">Hardcore</option>
+          </select>
+      </div>
+
+      <div class="text-center" style="margin-top: 15px;">
+          <button id="startSingleplayerGameBtn" class="btn">Rozpocznij grę</button>
+      </div>
+
+      <div class="text-center" style="margin-top: 8px;">
+          <button class="btn menuBtn">Powrót do menu</button>
       </div>
     </div>
 
@@ -184,6 +229,16 @@
     <p id="popupWPM"></p>
     <button id="popupCloseBtn" class="btn">Powrót do menu</button>
   </div>
+
+  <!-- Pop-up z odliczaniem przed startem gry -->
+  <div id="countdownPopupOverlay" class="popup-overlay"></div>
+
+  <div id="countdownPopup" class="popup">
+      <h2>Gra rozpocznie się za:</h2>
+      <p id="countdownPopupNumber" style="font-size: 2.5rem; font-weight: bold; color: #45a049;">5</p>
+  </div>
+
+
 
 </body>
 </html>

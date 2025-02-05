@@ -48,6 +48,17 @@ const menuBtns = document.querySelectorAll('.menuBtn');
 
 const modeSelect = document.getElementById('modeSelect');
 
+const singleplayerBtn = document.getElementById('singleplayerBtn');
+const pageSingleplayerNickname = document.getElementById('pageSingleplayerNickname');
+const singleplayerNicknameInput = document.getElementById('singleplayerNicknameInput');
+const confirmSingleplayerBtn = document.getElementById('confirmSingleplayerBtn');
+const pageSingleplayerLobby = document.getElementById('pageSingleplayerLobby');
+const singleplayerNicknameDisplay = document.getElementById('singleplayerNicknameDisplay');
+const singleplayerDifficulty = document.getElementById('singleplayerDifficulty');
+const singleplayerMode = document.getElementById('singleplayerMode');
+const startSingleplayerGameBtn = document.getElementById('startSingleplayerGameBtn');
+
+
 // Nowe: element wyświetlający czas pisania
 const finalTimeEl = document.getElementById('finalTime');
 
@@ -259,9 +270,64 @@ function updateDisplayedText() {
 typedTextEl.addEventListener('input', () => {
   totalKeystrokes++; // Każde naciśnięcie klawisza zwiększa licznik
   const value = typedTextEl.value;
-  socket.emit('typedText', { gameCode: currentGameCode, typedText: value });
+
+  if (currentGameCode) {
+      // Multiplayer (wysyłamy wpisany tekst do serwera)
+      socket.emit('typedText', { gameCode: currentGameCode, typedText: value });
+  } else {
+      // Singleplayer (lokalna obsługa)
+      let correctCount = 0;
+      let isCorrect = true;
+
+      for (let i = 0; i < value.length; i++) {
+          if (value[i] === originalText[i]) {
+              correctCount++;
+          } else {
+              isCorrect = false;
+              break;
+          }
+      }
+
+      // Tryb NORMAL - błędny znak zostaje usunięty
+      if (!isCorrect && gameMode === "normal") {
+          incorrectKeystrokes++;
+          typedTextEl.value = value.slice(0, -1); // Usuwamy ostatni wpisany znak
+          typedTextEl.classList.add('flash-error');
+          setTimeout(() => {
+              typedTextEl.classList.remove('flash-error');
+          }, 300);
+      }
+
+      // Tryb HARDCORE - reset całego tekstu
+      if (!isCorrect && gameMode === "hardcore") {
+          incorrectKeystrokes++;
+          typedTextEl.value = ""; // Resetowanie tekstu
+          typedLength = 0; // Reset progresu
+          typedTextEl.classList.add('flash-error');
+          textToTypeEl.classList.add('flash-error-text');
+          document.body.classList.add("shake");
+
+          setTimeout(() => {
+              typedTextEl.classList.remove('flash-error');
+              textToTypeEl.classList.remove('flash-error-text');
+              document.body.classList.remove("shake");
+          }, 500);
+      }
+
+      // Aktualizacja wyświetlanego tekstu
+      typedLength = correctCount;
+      updateDisplayedText();
+
+      // Jeśli wpisany tekst jest poprawny, kończymy grę
+      if (value === originalText) {
+          setTimeout(() => endSingleplayerGame(), 500);
+      }
+  }
+
   setTimeout(() => updateDisplayedText(), 0);
 });
+
+
 
 // Błąd w pisaniu – podświetlanie pola i tekstu na czerwono
 socket.on('typingError', () => {
@@ -429,13 +495,18 @@ typedTextEl.addEventListener("paste", (e) => {
 
 // Obsługa kliknięcia przycisku "Poddaj się"
 giveUpBtn.addEventListener('click', () => {
-  console.log(`Kliknięto "Poddaj się". Aktualny kod gry: ${currentGameCode}`);
-  if (!currentGameCode || gameEnded) {
-      console.log("Błąd: Brak kodu gry lub gra już zakończona.");
-      return;
+  console.log(`Kliknięto "Poddaj się".`);
+  
+  if (currentGameCode) {
+      // Multiplayer - wysyłamy zdarzenie do serwera
+      socket.emit('giveUp', currentGameCode);
+  } else {
+      // Singleplayer - kończymy grę lokalnie
+      console.log("Gracz poddał się w trybie singleplayer.");
+      endSingleplayerGame();
   }
-  socket.emit('giveUp', currentGameCode);
 });
+
 
 // Obsługa zmiany poziomu trudności
 difficultySelect.addEventListener('change', () => {
@@ -512,3 +583,162 @@ socket.on('displayStats', ({ hostNickname, playerNickname, hostWPM, playerWPM, h
       <p>Gracz ${playerNickname}: WPM: <strong>${playerWPM}</strong> | Accuracy: <strong>${playerAccuracy}%</strong></p>
   `;
 });
+
+// Obsługa przycisku "Singleplayer"
+singleplayerBtn.addEventListener('click', () => {
+  showPage('pageSingleplayerNickname');
+});
+
+// Obsługa wpisywania nicku
+confirmSingleplayerBtn.addEventListener('click', () => {
+  const nickname = singleplayerNicknameInput.value.trim();
+  if (!nickname) {
+      alert('Wpisz swój nick.');
+      return;
+  }
+  singleplayerNicknameDisplay.textContent = nickname;
+  showPage('pageSingleplayerLobby');
+});
+
+// Obsługa startu gry singleplayer
+// Obsługa startu gry singleplayer
+startSingleplayerGameBtn.addEventListener('click', () => {
+  const difficulty = singleplayerDifficulty.value;
+  const mode = singleplayerMode.value;
+
+  // Pobranie tekstów dla singleplayera
+  import('./singleplayertexts.js')
+      .then(module => {
+          const texts = module.default || module;
+          const textsForDifficulty = texts.filter(t => t.difficulty === difficulty);
+
+          if (textsForDifficulty.length === 0) {
+              alert("Brak tekstów dla wybranego poziomu trudności!");
+              return;
+          }
+
+          const textToType = textsForDifficulty[Math.floor(Math.random() * textsForDifficulty.length)].text;
+          
+          // Pokazanie pop-upa odliczania
+          const countdownPopupOverlay = document.getElementById('countdownPopupOverlay');
+          const countdownPopup = document.getElementById('countdownPopup');
+          const countdownPopupNumber = document.getElementById('countdownPopupNumber');
+
+          countdownPopupOverlay.classList.add('show');
+          countdownPopup.classList.add('show');
+
+          let countdown = 5;
+          countdownPopupNumber.textContent = countdown;
+
+          const countdownInterval = setInterval(() => {
+              countdown--;
+              countdownPopupNumber.textContent = countdown;
+
+              if (countdown <= 0) {
+                  clearInterval(countdownInterval);
+
+                  // Ukrycie pop-upa odliczania
+                  countdownPopupOverlay.classList.remove('show');
+                  countdownPopup.classList.remove('show');
+
+                  // Rozpoczęcie gry po odliczaniu
+                  originalText = textToType;
+                  gameMode = mode;
+                  showPage('pageGame');
+                  textToTypeEl.innerHTML = "";
+                  updateDisplayedText();
+                  typedTextEl.value = "";
+                  typedTextEl.disabled = false;
+                  typedTextEl.focus();
+                  startTime = Date.now();
+              }
+          }, 1000);
+      })
+      .catch(error => {
+          console.error("Błąd podczas wczytywania singleplayertexts.js:", error);
+          alert("Nie udało się wczytać tekstów dla singleplayera.");
+      });
+});
+
+
+
+
+function endSingleplayerGame() {
+  console.log("Gra singleplayer zakończona.");
+
+  const endTime = Date.now();
+  const totalSeconds = ((endTime - startTime) / 1000).toFixed(2);
+
+  // Blokowanie wpisywania tekstu
+  typedTextEl.disabled = true;
+
+  // Obliczanie WPM
+  function calculateWPM(typedText, timeInSeconds) {
+      const wordsTyped = typedText.length / 5; // Średnio 5 znaków na słowo
+      const timeInMinutes = timeInSeconds / 60;
+      return timeInMinutes === 0 ? 0 : Math.round(wordsTyped / timeInMinutes);
+  }
+  const wpm = calculateWPM(typedTextEl.value, totalSeconds);
+
+  // Obliczanie dokładności
+  function calculateAccuracy() {
+    if (totalKeystrokes === 0) return 0; // Zapobiega dzieleniu przez zero
+    
+    // Prawidłowe znaki to poprawnie wpisane litery
+    const correctKeystrokes = totalKeystrokes - incorrectKeystrokes;
+    
+    // Accuracy to stosunek poprawnych znaków do wszystkich naciśnięć klawiatury
+    return Math.round((correctKeystrokes / totalKeystrokes) * 100);
+  }
+
+  const accuracy = calculateAccuracy();
+
+  // Wyświetlenie popupu końcowego
+  const popup = document.getElementById('resultPopup');
+  const popupOverlay = document.getElementById('popupOverlay');
+  const popupTitle = document.getElementById('popupTitle');
+  const popupMessage = document.getElementById('popupMessage');
+  const popupTime = document.getElementById('popupTime');
+  const popupWPM = document.getElementById('popupWPM');
+  const popupCloseBtn = document.getElementById('popupCloseBtn');
+
+  popupTitle.innerText = "Gra zakończona!";
+  popupMessage.innerText = "Twój wynik:";
+  popupTime.innerText = `Czas gry: ${totalSeconds} s`;
+  popupWPM.innerHTML = `WPM: <strong>${wpm}</strong> | Dokładność: <strong>${accuracy}%</strong>`;
+
+  popup.classList.add("show");
+  popupOverlay.classList.add("show");
+
+  // Resetowanie danych po zamknięciu popupa
+  popupCloseBtn.addEventListener('click', () => {
+      popup.classList.remove("show");
+      popupOverlay.classList.remove("show");
+      resetSingleplayerGame(); // NOWA FUNKCJA RESETUJĄCA
+      showPage('pageIntro');
+  });
+
+  console.log("Zakończono grę singleplayer. WPM:", wpm, "Dokładność:", accuracy);
+}
+
+function resetSingleplayerGame() {
+  console.log("Resetowanie danych singleplayer...");
+
+  // Czyszczenie zmiennych
+  originalText = "";
+  typedLength = 0;
+  startTime = null;
+  totalKeystrokes = 0;
+  incorrectKeystrokes = 0;
+
+  // Resetowanie pola wpisywania tekstu
+  typedTextEl.value = "";
+  typedTextEl.disabled = false;
+
+  // Resetowanie wyświetlanego tekstu
+  textToTypeEl.innerHTML = "";
+  
+  // Resetowanie trybu gry
+  gameMode = "normal"; // Domyślnie tryb normal
+}
+

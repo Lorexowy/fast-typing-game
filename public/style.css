@@ -640,3 +640,11 @@ input[type="text"]:focus {
 .popup.show {
   animation: fadeIn 0.3s ease-out;
 }
+
+#pageSingleplayerLobby select {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}

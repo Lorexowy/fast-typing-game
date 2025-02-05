@@ -6,7 +6,8 @@ const translations = {
       themeToggle: "Tryb ciemny",
       optionsPlaceholder: "Tutaj będą pojawiały się opcje gry...",
       gameTitle: "Gra w szybkie pisanie",
-      introOptions: "Wybierz jedną z opcji:",
+      introOptions1: "Graj samemu:",
+      introOptions2: "Graj ze znajomymi:",
       createGame: "Stwórz grę",
       joinGame: "Dołącz do gry",
       enterNickname: "Podaj swój nick",
@@ -39,7 +40,8 @@ const translations = {
       notReady: "Niegotowy",
       gameModeLabel: "Tryb gry:",
       hardcoreMode: "Hardcore",
-      normalMode: "Normal"
+      normalMode: "Normal",
+      singleplayer: "Singleplayer"
     },
     en: {
       pageTitle: "Fast Typing Game",
@@ -47,7 +49,8 @@ const translations = {
       themeToggle: "Dark Mode",
       optionsPlaceholder: "Game options will appear here...",
       gameTitle: "Fast Typing Game",
-      introOptions: "Choose one of the options:",
+      introOptions1: "Play solo:",
+      introOptions2: "Play with friends:",
       createGame: "Create Game",
       joinGame: "Join Game",
       enterNickname: "Enter your nickname",
@@ -80,7 +83,8 @@ const translations = {
       notReady: "Not Ready",
       gameModeLabel: "Game mode:",
       hardcoreMode: "Hardcore",
-      normalMode: "Normal"
+      normalMode: "Normal",
+      singleplayer: "Singleplayer"
     }
   };
   
