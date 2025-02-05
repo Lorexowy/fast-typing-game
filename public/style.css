@@ -44,11 +44,24 @@ body {
 }
 
 /* Tytuł gry (jeśli w <h1 class="title">) możesz zmienić wygląd np. */
+/* Styl tytułu */
 .title {
   font-size: 2rem;
   margin-bottom: 20px;
-  text-align: center; /* dodatkowe wyśrodkowanie w razie czego */
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+  border-right: 3px solid #4caf50; /* Kursor pisania */
+  animation: blinkCursor 0.8s infinite;
 }
+
+/* Animacja migania kursora */
+@keyframes blinkCursor {
+  50% { border-color: transparent; }
+}
+
 
 /* Przyciski - wygląd taki jak wcześniej */
 .btn {
@@ -377,18 +390,51 @@ input[type="text"]:focus {
 
 /* Styl stopki */
 .footer {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 12px;
-  color: #666;
+  position: relative;
+  width: 100%;
+  color: #222;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 14px;
   font-weight: bold;
+  bottom: 0;
+}
+
+/* Pasek oddzielający elementy */
+.footer-divider {
+  color: #777;
+  margin: 0 8px;
+}
+
+/* Link do strony autora */
+.footer-link {
+  color: #4caf50;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease-in-out;
+}
+
+.footer-link:hover {
+  color: #2ecc71;
+  text-decoration: none;
 }
 
 /* Stopka w trybie ciemnym */
 .dark-mode .footer {
+  background: #222;
   color: #aaa;
+}
+
+.dark-mode .footer-divider {
+  color: #555;
+}
+
+.dark-mode .footer-link {
+  color: #d3d3d3;
+}
+
+.dark-mode .footer-link:hover {
+  color: #555;
 }
 
 /* Blokowanie zaznaczania tekstu w polu do przepisywania */

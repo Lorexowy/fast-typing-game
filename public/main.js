@@ -742,3 +742,25 @@ function resetSingleplayerGame() {
   gameMode = "normal"; // Domyślnie tryb normal
 }
 
+function typeTitleEffect() {
+  const titleElement = document.querySelector('.title'); // Pobieramy element tytułu
+  const titleText = "Gra w szybkie pisanie"; // Tekst do wpisania
+  let index = 0;
+  
+  titleElement.textContent = ""; // Czyścimy domyślny tekst
+
+  function typeNextLetter() {
+      if (index < titleText.length) {
+          titleElement.textContent += titleText[index];
+          index++;
+          setTimeout(typeNextLetter, 100); // Czas opóźnienia wpisywania kolejnych liter (100ms)
+      }
+  }
+
+  typeNextLetter(); // Uruchomienie efektu wpisywania
+}
+
+// Uruchomienie animacji po załadowaniu strony
+document.addEventListener("DOMContentLoaded", typeTitleEffect);
+
+
