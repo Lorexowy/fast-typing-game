@@ -251,6 +251,10 @@ io.on('connection', (socket) => {
 
 });
 
+// Import modułu dla trybu find match
+const setupFindMatch = require('./findmatchserver');
+setupFindMatch(io);
+
 server.listen(3000, () => {
   console.log('Serwer działa na porcie 3000');
 });

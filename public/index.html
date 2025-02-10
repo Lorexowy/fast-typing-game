@@ -36,12 +36,54 @@
       <div class="btn-group text-center">
         <button id="singleplayerBtn" class="btn" data-i18n="singleplayer">Singleplayer</button>
       </div>
+      <p class="text-center" data-i18n="introOptions3">Graj z losowym przeciwnikiem:</p>
+      <div class="btn-group text-center">
+        <button id="findMatchBtn" class="btn" data-i18n="findMatch">Znajdź przeciwnika</button>
+      </div>      
       <p class="text-center" data-i18n="introOptions2">Graj ze znajomymi:</p>
       <div>
         <button id="createGameBtn" class="btn" data-i18n="createGame">Stwórz grę</button>
         <button id="goToJoinBtn" class="btn" data-i18n="joinGame">Dołącz do gry</button>
       </div>
     </div>
+
+    <!-- Ekran wpisywania nicku dla find match -->
+    <div id="pageFindMatchNickname" class="page hidden">
+      <h2 class="text-center">Podaj swój nick</h2>
+      <div class="text-center">
+        <input type="text" id="findMatchNicknameInput" placeholder="Twój nick" />
+        <button id="confirmFindMatchBtn" class="btn">Dalej</button>
+        <button class="btn menuBtn">Powrót do menu</button>
+      </div>
+    </div>
+
+    <!-- Ekran oczekiwania na przeciwnika -->
+    <div id="pageFindMatchWaiting" class="page hidden">
+      <h2 class="text-center">Szukam przeciwnika...</h2>
+      <!-- Tu możesz dodać animację spinnera -->
+    </div>
+
+    <!-- Ekran gry dla find match -->
+    <div id="pageFindMatchGame" class="page hidden">
+      <h2 class="text-center">Przepisz tekst najszybciej, jak potrafisz!</h2>
+      <div id="findMatchTextContainer" class="text-container">
+        <div id="findMatchTextToType" class="big-text"></div>
+      </div>
+      <div class="text-center">
+        <input type="text" id="findMatchTypedText" class="typing-input" placeholder="Tutaj pisz..." />
+      </div>
+      <h3 id="findMatchWinner" class="text-center"></h3>
+      <h4 id="findMatchFinalTime" class="text-center"></h4>
+      <div class="text-center">
+        <button id="findMatchReturnToMenuBtn" class="btn hidden">Powrót do menu</button>
+      </div>
+      <h4 class="text-center">Postęp przeciwnika:</h4>
+      <div id="findMatchOpponentProgress" class="progress-container text-center"></div>
+      <div class="text-center" style="margin-top: 10px;">
+        <button id="findMatchGiveUpBtn" class="btn">Poddaj się</button>
+      </div>
+    </div>
+
 
     <!-- Ekran wpisywania nicku dla singleplayera -->
     <div id="pageSingleplayerNickname" class="page hidden">
@@ -213,6 +255,7 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="translations.js"></script>
   <script src="main.js"></script>
+  <script src="findmatchlocal.js"></script>  
 
   <footer class="footer">
     <p>&copy; 2025 Fast Type Race. All rights reserved.  
