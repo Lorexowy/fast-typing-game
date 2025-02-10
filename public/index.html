@@ -260,15 +260,19 @@
   <script src="main.js"></script>
   <script src="findmatchlocal.js"></script>
   <script src="howtoplaypopup.js"></script>
+  <script src="versionpopup.js"></script>
 
   <footer class="footer">
     <p>&copy; 2025 Fast Type Race. All rights reserved.  
         <span class="footer-divider">|</span> 
         Coded by <a href="https://mateuszmichel.com/" target="_blank" class="footer-link">Mateusz Michel</a>  
         <span class="footer-divider">|</span>  
-        Version 1.0
+        <span id="versionInfo" style="cursor: pointer; text-decoration: underline;">Version 1.0</span>
     </p>
-</footer>
+    <p style="font-weight: 300;" id="donateInfo" data-i18n="donateInfo">
+      If you like this game and would like to support my work, please consider <a style="color: green; text-decoration: none;" href="https://www.paypal.me/LOREXmusic" target="_blank"><strong>donating</strong></a>.<br><strong> Thank you!</strong>
+    </p>
+  </footer>
 
 
   <!-- Tło przyciemniające ekran -->
@@ -340,6 +344,63 @@
     </ul>
     <br>
     <button id="closeHowToPlayBtn" class="btn" data-i18n="closeHowToPlayBtn">Close</button>
+  </div>
+</div>
+
+<!-- Changelog & Author Info Popup -->
+<div id="versionPopup" class="popup popup-version">
+  <button id="closeVersionPopup" class="popup-close">X</button>
+  <div class="popup-content">
+    <p id="donateInfo" data-i18n="donateInfo">
+      If you like this game and would like to support my work, please consider <a style="color: green; text-decoration: none;" href="https://www.paypal.me/LOREXmusic" target="_blank"><strong>donating</strong></a>.<br><strong> Thank you!</strong>
+    </p>
+    <h2 style="color:#45a049;" data-i18n="versionPopupTitle">Changelog &amp; Author Info</h2>
+    <div data-i18n="versionPopupContent">
+      <p style="color:#45a049;"><strong>Changelog:</strong></p>
+      <ul>
+        <li>Version 1.0 - Initial game version - February 7th 2025</li>
+        <br>
+        <li><strong>GAME TYPES ADDED:</strong>
+          <ul>
+            <li>Singleplayer</li>
+            <li>Play with Friends</li>
+            <li>Find Match</li>
+          </ul>
+        </li>
+        <li><strong>DIFFICULTY LEVELS ADDED:</strong>
+          <ul>
+            <li>Easy</li>
+            <li>Medium</li>
+            <li>Hard</li>
+          </ul>
+        </li>
+        <li><strong>GAME MODES ADDED:</strong>
+          <ul>
+            <li>Normal</li>
+            <li>Hardcore</li>
+          </ul>
+        </li>
+      </ul>
+      <br>
+      <p style="color:#45a049;"><strong>Technologies &amp; Tools:</strong></p>
+      <ul>
+        <li>HTML5, CSS3, JavaScript (ES6+)</li>
+        <li>Node.js, Express</li>
+        <li>Socket.IO for real-time communication</li>
+        <li>Google Fonts (Poppins)</li>
+        <li>Custom CSS animations and transitions</li>
+      </ul>
+      <br>
+      <p style="color:#45a049;"><strong>About the Author:</strong></p>
+      <ul>
+      <li style="font-size: 0.8rem; font-weight: 300;">This game was developed by Mateusz Michel.</li>
+      <li style="font-size: 0.8rem; font-weight: 300;">The initial development of the game took about a week and was a hobby project.</li>
+      <li style="font-size: 0.8rem; font-weight: 300;">I am eager to develop it further, and am very interested in the ideas of possible players.</li>
+      <li style="font-size: 0.8rem; font-weight: 300;">Thank you for playing my game!</li>
+      </ul>
+      <br>
+    </div>
+    <button id="closeVersionPopupBtn" class="btn" data-i18n="closeVersionPopupBtn">Close</button>
   </div>
 </div>
 

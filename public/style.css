@@ -813,3 +813,43 @@ body.dark-mode #howToPlayBtn:hover {
   border-radius: 5px;
   border: 1px solid #ccc;
 }
+
+/* Styl dla popupu wersji – używamy oddzielnej klasy .popup-version */
+.popup-version {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(5px);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  text-align: center;
+  width: 600px;           /* Możesz zmienić szerokość */
+  max-width: 80vw;
+  max-height: 80vh;
+  overflow: hidden;       /* Ukrywa zawartość, która wykracza poza ramy popupu */
+  display: none;
+  z-index: 100;
+}
+
+/* Umożliwienie przewijania zawartości popupu wersji */
+.popup-version .popup-content {
+  padding-top: 30px;
+  overflow-y: auto;
+  max-height: calc(80vh - 60px);
+}
+
+/* Styl przycisku zamykania (X) – podobnie jak wcześniej */
+.popup-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: #45a049;
+  cursor: pointer;
+}
+
