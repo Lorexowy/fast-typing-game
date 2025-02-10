@@ -1,13 +1,14 @@
 // translations.js
 const translations = {
     pl: {
-      pageTitle: "Gra w szybkie pisanie",
+      pageTitle: "Fast Typing Race",
       optionsGame: "Opcje gry",
       themeToggle: "Tryb ciemny",
       optionsPlaceholder: "Tutaj będą pojawiały się opcje gry...",
       gameTitle: "Gra w szybkie pisanie",
       introOptions1: "Graj samemu:",
       introOptions2: "Graj ze znajomym:",
+      introOptions3: "Znajdź przeciwnika:",
       createGame: "Stwórz grę",
       joinGame: "Dołącz do gry",
       enterNickname: "Podaj swój nick",
@@ -41,16 +42,18 @@ const translations = {
       gameModeLabel: "Tryb gry:",
       hardcoreMode: "Hardcore",
       normalMode: "Normal",
-      singleplayer: "Singleplayer"
+      singleplayer: "Singleplayer",
+      findMatch: "Znajdź przeciwnika"
     },
     en: {
-      pageTitle: "Fast Typing Game",
+      pageTitle: "Fast Typing Race",
       optionsGame: "Game Options",
       themeToggle: "Dark Mode",
       optionsPlaceholder: "Game options will appear here...",
       gameTitle: "Fast Typing Game",
       introOptions1: "Play solo:",
       introOptions2: "Play with friend:",
+      introOptions3: "Find your opponent:",
       createGame: "Create Game",
       joinGame: "Join Game",
       enterNickname: "Enter your nickname",
@@ -84,7 +87,8 @@ const translations = {
       gameModeLabel: "Game mode:",
       hardcoreMode: "Hardcore",
       normalMode: "Normal",
-      singleplayer: "Singleplayer"
+      singleplayer: "Singleplayer",
+      findMatch: "Find match"
     }
   };
   

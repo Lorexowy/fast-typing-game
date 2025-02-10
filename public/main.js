@@ -744,7 +744,7 @@ function resetSingleplayerGame() {
 
 function typeTitleEffect() {
   const titleElement = document.querySelector('.title'); // Pobieramy element tytułu
-  const titleText = "Gra w szybkie pisanie"; // Tekst do wpisania
+  const titleText = "Fast Typing Race"; // Tekst do wpisania
   let index = 0;
   
   titleElement.textContent = ""; // Czyścimy domyślny tekst
