@@ -45,6 +45,9 @@
         <button id="createGameBtn" class="btn" data-i18n="createGame">Stwórz grę</button>
         <button id="goToJoinBtn" class="btn" data-i18n="joinGame">Dołącz do gry</button>
       </div>
+      <div class="text-center" style="margin-top: 20px;">
+        <button id="howToPlayBtn" class="btn" style="font-size: 0.8rem;">How to play?</button>
+      </div>
     </div>
 
     <!-- Ekran wpisywania nicku dla find match -->
@@ -255,7 +258,8 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="translations.js"></script>
   <script src="main.js"></script>
-  <script src="findmatchlocal.js"></script>  
+  <script src="findmatchlocal.js"></script>
+  <script src="howtoplaypopup.js"></script>
 
   <footer class="footer">
     <p>&copy; 2025 Fast Type Race. All rights reserved.  
@@ -287,6 +291,57 @@
       <p id="countdownPopupNumber" style="font-size: 2.5rem; font-weight: bold; color: #45a049;">5</p>
   </div>
 
+
+
+<!-- Popup z instrukcją – umieść go na końcu, przed zamknięciem tagu </body> -->
+<div id="howToPlayPopup" class="popup popup-howtoplay">
+  <button id="closeHowToPlay" class="popup-close">X</button>
+  <div class="popup-content">
+    <h2 style="color:#45a049;" data-i18n="howToPlayTitle">How to play?</h2>
+    <p data-i18n="howToPlayText1">
+      In this game, your goal is to type the given text as fast as possible. The game offers various modes:
+    </p>
+    <p style="color:#45a049;" data-i18n="gameTypesTitle"><strong>Game types:</strong></p>
+    <ul>
+      <li data-i18n="gameTypeSingleplayer">
+        <strong>▶ Singleplayer:</strong> A mode designed for players who want to improve their typing speed and accuracy. You play solo with no time constraints.
+      </li>
+      <li data-i18n="gameTypeWithFriend">
+        <strong>▶ Play with friends:</strong> Create or join a game to compete with a friend.
+      </li>
+      <li data-i18n="gameTypeFindMatch">
+        <strong">▶ Find Match:</strong> Find an opponent online and compete with players from around the world!
+      </li>
+    </ul>
+    <br>
+    <p style="color:#45a049;" data-i18n="difficultyTitle"><strong>Difficulty Levels:</strong></p>
+    <p data-i18n="difficultyNote">*available only in multiplayer and play with friend modes</p>
+    <ul>
+      <li data-i18n="difficultyEasy">
+        <strong>▶ Easy:</strong> Texts are short and contain minimal punctuation.
+      </li>
+      <li data-i18n="difficultyMedium">
+        <strong>▶ Medium:</strong> Texts are of moderate length with a normal amount of punctuation.
+      </li>
+      <li data-i18n="difficultyHard">
+        <strong>▶ Hard:</strong> Texts are long and complex, containing challenging words and lots of punctuation.
+      </li>
+    </ul>
+    <br>
+    <p style="color:#45a049;" data-i18n="gameModeTitle"><strong>Game Modes:</strong></p>
+    <p data-i18n="gameModeNote">*available only in multiplayer and play with friend modes</p>
+    <ul>
+      <li data-i18n="modeNormal">
+        <strong>▶ Normal:</strong> The game does not allow you to type an incorrect character and notifies you of mistakes, letting you continue from the last correct character.
+      </li>
+      <li data-i18n="modeHardcore">
+        <strong>▶ Hardcore:</strong> Any mistake cancels all progress, and you must retype the entire text from the beginning.
+      </li>
+    </ul>
+    <br>
+    <button id="closeHowToPlayBtn" class="btn" data-i18n="closeHowToPlayBtn">Close</button>
+  </div>
+</div>
 
 
 </body>
