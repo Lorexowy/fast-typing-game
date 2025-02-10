@@ -16,13 +16,13 @@ module.exports = function(io) {
     socket.on('joinFindMatch', (nickname) => {
       for (let id in waitingPlayers) {
         if (waitingPlayers[id].nickname === nickname) {
-          socket.emit('findMatchError', 'Ten nick jest już w użyciu, wybierz inny.');
+          socket.emit('findMatchError', 'This nickname is already in use, choose another.');
           return;
         }
       }
       waitingPlayers[socket.id] = { nickname };
       console.log(`[FindMatch] Gracz ${nickname} dołączył do kolejki.`);
-      socket.emit('waitingForOpponent', 'Szukam przeciwnika...');
+      socket.emit('waitingForOpponent', 'Looking for an opponent...');
 
       let otherPlayerId = null;
       for (let id in waitingPlayers) {

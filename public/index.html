@@ -52,23 +52,23 @@
 
     <!-- Ekran wpisywania nicku dla find match -->
     <div id="pageFindMatchNickname" class="page hidden">
-      <h2 class="text-center">Podaj swój nick</h2>
+      <h2 class="text-center">Type your nickname</h2>
       <div class="text-center">
         <input type="text" id="findMatchNicknameInput" placeholder="Twój nick" />
-        <button id="confirmFindMatchBtn" class="btn">Dalej</button>
-        <button class="btn menuBtn">Powrót do menu</button>
+        <button id="confirmFindMatchBtn" class="btn">Next</button>
+        <button class="btn menuBtn">Return to menu</button>
       </div>
     </div>
 
     <!-- Ekran oczekiwania na przeciwnika -->
     <div id="pageFindMatchWaiting" class="page hidden">
-      <h2 class="text-center">Szukam przeciwnika...</h2>
+      <h2 class="text-center">Looking for an opponent...</h2>
       <!-- Tu możesz dodać animację spinnera -->
     </div>
 
     <!-- Ekran gry dla find match -->
     <div id="pageFindMatchGame" class="page hidden">
-      <h2 class="text-center">Przepisz tekst najszybciej, jak potrafisz!</h2>
+      <h2 class="text-center">Write the text as fast as you can!</h2>
       <div id="findMatchTextContainer" class="text-container">
         <div id="findMatchTextToType" class="big-text"></div>
       </div>
@@ -78,12 +78,12 @@
       <h3 id="findMatchWinner" class="text-center"></h3>
       <h4 id="findMatchFinalTime" class="text-center"></h4>
       <div class="text-center">
-        <button id="findMatchReturnToMenuBtn" class="btn hidden">Powrót do menu</button>
+        <button id="findMatchReturnToMenuBtn" class="btn hidden">Return to menu</button>
       </div>
-      <h4 class="text-center">Postęp przeciwnika:</h4>
+      <h4 class="text-center">Opponent progress:</h4>
       <div id="findMatchOpponentProgress" class="progress-container text-center"></div>
       <div class="text-center" style="margin-top: 10px;">
-        <button id="findMatchGiveUpBtn" class="btn">Poddaj się</button>
+        <button id="findMatchGiveUpBtn" class="btn">Give Up</button>
       </div>
     </div>
 
@@ -128,19 +128,19 @@
     <!-- Lobby singleplayer -->
     <div id="pageSingleplayerLobby" class="page hidden">
       <h2 class="text-center">Lobby Singleplayer</h2>
-      <p class="text-center">Gracz: <span id="singleplayerNicknameDisplay"></span></p>
+      <p class="text-center">Player: <span id="singleplayerNicknameDisplay"></span></p>
 
       <div class="text-center">
-          <label for="singleplayerDifficulty">Poziom trudności:</label>
+          <label for="singleplayerDifficulty">Difficulty Level:</label>
           <select id="singleplayerDifficulty">
-              <option value="easy">Łatwy</option>
-              <option value="medium">Średni</option>
-              <option value="hard">Trudny</option>
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
           </select>
       </div>
 
       <div class="text-center">
-          <label for="singleplayerMode">Tryb gry:</label>
+          <label for="singleplayerMode">Game Mode:</label>
           <select id="singleplayerMode">
               <option value="normal">Normal</option>
               <option value="hardcore">Hardcore</option>
@@ -148,11 +148,11 @@
       </div>
 
       <div class="text-center" style="margin-top: 15px;">
-          <button id="startSingleplayerGameBtn" class="btn">Rozpocznij grę</button>
+          <button id="startSingleplayerGameBtn" class="btn" data-i18n="startGame">Rozpocznij grę</button>
       </div>
 
       <div class="text-center" style="margin-top: 8px;">
-          <button class="btn menuBtn">Powrót do menu</button>
+          <button class="btn menuBtn" data-i18n="returnToMenu">Powrót do menu</button>
       </div>
     </div>
 
@@ -190,9 +190,9 @@
             <label for="difficultySelect" data-i18n="difficultyLevel">Poziom trudności:</label>
             <div class="custom-select">
               <select id="difficultySelect">
-                <option value="easy" data-i18n="easy">Łatwy</option>
-                <option value="medium" selected data-i18n="medium">Średni</option>
-                <option value="hard" data-i18n="hard">Trudny</option>
+                <option value="easy" data-i18n="easy">Easy</option>
+                <option value="medium" selected data-i18n="medium">Medium</option>
+                <option value="hard" data-i18n="hard">Hard</option>
               </select>
             </div>
           </div>
