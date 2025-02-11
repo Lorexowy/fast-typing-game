@@ -405,13 +405,13 @@ socket.on('gameFinished', (data) => {
   const popupCloseBtn = document.getElementById('popupCloseBtn');
 
   if (winnerSocketId === socket.id) {
-    popupTitle.innerText = "Gratulacje!";
-    popupMessage.innerText = surrendered ? "Przeciwnik się poddał!" : "Wygrałeś wyścig!";
-    popupTime.innerText = `Czas gry: ${totalSeconds} s`;
+    popupTitle.innerText = "Congratulations!";
+    popupMessage.innerText = surrendered ? "The opponent has surrendered!" : "You won the race!";
+    popupTime.innerText = `Playing time: ${totalSeconds} s`;
   } else {
     popupTitle.innerText = "Przegrana!";
-    popupMessage.innerText = surrendered ? "Poddałeś się..." : "Twój przeciwnik był szybszy!";
-    popupTime.innerText = `Czas gry: ${totalSeconds} s`;
+    popupMessage.innerText = surrendered ? "You gave up..." : "Your opponent was faster!";
+    popupTime.innerText = `Playing time: ${totalSeconds} s`;
   }
 
   popup.classList.add("show");
@@ -455,7 +455,7 @@ socket.on('opponentProgress', ({ typedLength: oppLen }) => {
 // Host regeneruje kod -> stara gra nie istnieje
 socket.on('hostLeft', () => {
   showPage('pageIntro');
-  infoEl.innerText = "Host zakończył grę. Możesz dołączyć do innej gry lub stworzyć własną.";
+  infoEl.innerText = "The host has ended the game. You can join another game or create your own.";
 });
 
 // Błędy
@@ -579,8 +579,8 @@ socket.on('displayStats', ({ hostNickname, playerNickname, hostWPM, playerWPM, h
   const popupWPM = document.getElementById('popupWPM');
 
   popupWPM.innerHTML = `
-      <p>Gracz ${hostNickname}: WPM: <strong>${hostWPM}</strong> | Accuracy: <strong>${hostAccuracy}%</strong></p>
-      <p>Gracz ${playerNickname}: WPM: <strong>${playerWPM}</strong> | Accuracy: <strong>${playerAccuracy}%</strong></p>
+      <p>Player ${hostNickname}: WPM: <strong>${hostWPM}</strong> | Accuracy: <strong>${hostAccuracy}%</strong></p>
+      <p>Player ${playerNickname}: WPM: <strong>${playerWPM}</strong> | Accuracy: <strong>${playerAccuracy}%</strong></p>
   `;
 });
 
@@ -656,7 +656,7 @@ startSingleplayerGameBtn.addEventListener('click', () => {
       })
       .catch(error => {
           console.error("Błąd podczas wczytywania singleplayertexts.js:", error);
-          alert("Nie udało się wczytać tekstów dla singleplayera.");
+          alert("Failed to load texts for singleplayer.");
       });
 });
 
@@ -702,10 +702,10 @@ function endSingleplayerGame() {
   const popupWPM = document.getElementById('popupWPM');
   const popupCloseBtn = document.getElementById('popupCloseBtn');
 
-  popupTitle.innerText = "Gra zakończona!";
-  popupMessage.innerText = "Twój wynik:";
-  popupTime.innerText = `Czas gry: ${totalSeconds} s`;
-  popupWPM.innerHTML = `WPM: <strong>${wpm}</strong> | Dokładność: <strong>${accuracy}%</strong>`;
+  popupTitle.innerText = "The game is over!";
+  popupMessage.innerText = "Your score:";
+  popupTime.innerText = `Playing time: ${totalSeconds} s`;
+  popupWPM.innerHTML = `WPM: <strong>${wpm}</strong> | Accuracy: <strong>${accuracy}%</strong>`;
 
   popup.classList.add("show");
   popupOverlay.classList.add("show");

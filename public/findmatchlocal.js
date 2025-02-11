@@ -177,16 +177,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const popupMessage = document.getElementById('popupMessage');
     const popupTime = document.getElementById('popupTime');
     if (winnerId === findMatchSocket.id) {
-      popupTitle.innerText = "Gratulacje!";
-      popupMessage.innerText = "Wygrałeś wyścig!";
+      popupTitle.innerText = "Congratulations!";
+      popupMessage.innerText = "You won the race!";
     } else if (winnerId === "giveUp") {
-      popupTitle.innerText = "Gra zakończona!";
-      popupMessage.innerText = "Przeciwnik się poddał!";
+      popupTitle.innerText = "The game is over!";
+      popupMessage.innerText = "The game ended by surrender!";
     } else {
-      popupTitle.innerText = "Przegrana!";
-      popupMessage.innerText = "Twój przeciwnik był szybszy!";
+      popupTitle.innerText = "Loser!";
+      popupMessage.innerText = "Your opponent was faster!";
     }
-    popupTime.innerText = `Czas gry: ${totalSeconds} s`;
+    popupTime.innerText = `Playing time: ${totalSeconds} s`;
     popup.classList.add("show");
     // Resetujemy roomId
     findMatchRoomId = null;
