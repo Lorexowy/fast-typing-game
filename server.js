@@ -255,6 +255,7 @@ io.on('connection', (socket) => {
 const setupFindMatch = require('./findmatchserver');
 setupFindMatch(io);
 
-server.listen(3000, () => {
-  console.log('Serwer działa na porcie 3000');
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, () => {
+  console.log(`Serwer działa na porcie ${PORT}`);
 });
